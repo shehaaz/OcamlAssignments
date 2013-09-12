@@ -9,7 +9,13 @@
  
 *)
 
-let rec dble (n : int) = match n with
+(*
+Should be "match n with"
+synthax error the arrows were wrong
+added parameter n of type int
+made the function recursive by added let rec
+*)
+let rec dble (n : int) = match n with 
   | 0 -> 0
   | _ -> 2 + (dble (n - 1))
 
@@ -25,8 +31,13 @@ let rec dble (n : int) = match n with
    fact : int -> int
 *)
 
+(*
+Added the line before the pattern matchs
+made 1.0 an int
+changed factorial to fact
+*)
 let rec fact (n : int)  = match n with 
-  | 0 -> 1
+  |0 -> 1
   |_ -> n * (fact (n - 1))
 
 

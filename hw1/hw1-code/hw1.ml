@@ -117,6 +117,23 @@ let rec weight m = match m with
 | Object o -> o
 | Wire(l,r) -> weight(l) + weight(r);;
 
+(*
+Tests:
+
+# let m1:mobile = Object 8;;
+val m1 : mobile = Object 8
+
+# weight m1;;
+- : int = 8
+
+# let m2:mobile = Wire(Object 8, Wire(Wire(Object 2, Object 2), Object 4));;
+val m2 : mobile = Wire (Object 8, Wire (Wire (Object 2, Object 2), Object 4))
+
+# weight m2;;
+- : int = 16
+
+*)
+
 (* ------------------------------------------------------------*)
 (* Q4.2: Balance                                               *)
 (* ------------------------------------------------------------*)
@@ -135,6 +152,34 @@ let rec balanced m = match m with
   |Object o -> true
   |Wire(l,r) -> if weight l = weight r then balanced l & balanced r 
                 else false;; 
+
+(*
+
+# let m1:mobile = Object 8;;
+val m1 : mobile = Object 8
+
+# balanced m1;;
+- : bool = true
+
+# let m2:mobile = Wire(Object 8, Wire(Wire(Object 2, Object 2), Object 4));;
+val m2 : mobile = Wire (Object 8, Wire (Wire (Object 2, Object 2), Object 4))
+
+# balanced m2;;
+- : bool = true
+
+# let m3:mobile = Wire(Object 7, Wire(Wire(Object 2, Object 2), Object 4));;
+val m3 : mobile = Wire (Object 7, Wire (Wire (Object 2, Object 2), Object 4))
+
+# balanced m3;;
+- : bool = false
+
+#  let m4:mobile = Wire(Object 8, Wire(Wire(Object 1, Object 2), Object 4));;
+val m4 : mobile = Wire (Object 8, Wire (Wire (Object 1, Object 2), Object 4))
+
+# balanced m4;;
+- : bool = false
+
+*)
 
 
 (* ------------------------------------------------------------*)

@@ -3,7 +3,7 @@ Error #1:
   File "hw1-fixme.ml", line 12, characters 23-25:
 Error: Syntax error
 
-"match n of" was changed to "match n with" 
+"match n of" I changed it to "match n with" to fix the Synthax error 
 
 
 
@@ -24,7 +24,7 @@ Error #3:
 File "hw1-fixme.ml", line 30, characters 4-5:
 Error: Syntax error
 
-I added the verticle lines before 0 and _
+I added the verticle lines before 0 and _ to fix the Syntax error
 
   | 0 -> 1.0
   |_ -> n * (factorial (n - 1))
@@ -36,7 +36,11 @@ Error #4:
 File "hw1-fixme.ml", line 12, characters 21-22:
 Error: Unbound value n
 
-bounded n and gave it a type
+bounded n: (Added value "n" after "dble")
+
+"let dble (n : int) = match n with
+  | 0 -> 0
+  | _ -> 2 + (dble (n - 1))"
 
 
 
@@ -45,11 +49,11 @@ Error #5
 File "hw1-fixme.ml", line 14, characters 14-18:
 Error: Unbound value dble
 
-dble was not defined as a recursive function
+dble was not defined as a recursive function.
 
-let rec dble (n : int) = match n with
+"let rec dble (n : int) = match n with
   | 0 -> 0
-  | _ -> 2 + (dble (n - 1))
+  | _ -> 2 + (dble (n - 1))"
 
 
 
@@ -59,11 +63,11 @@ Error #6
 File "hw1-fixme.ml", line 30, characters 13-22:
 Error: Unbound value factorial
 
-The method is named fact and not factorial
+I changed the method name to "fact" from "factorial"
 
 let rec fact (n : int)  = match n with 
   | 0 -> 1.0
-  |_ -> n * (fact (n - 1))
+  |_  -> n * (fact (n - 1))
 
 
 
@@ -74,7 +78,7 @@ File "hw1-fixme.ml", line 30, characters 12-26:
 Error: This expression has type float but an expression was expected of type
          int
 
-It has to pattern match to an interger value because the function was expecting an integer
+The pattern "0 -> 1" must return an int because the pattern below it is doing integer arithmetic and return value has to be an int "fact : int -> int"
 
 let rec fact (n : int)  = match n with 
   | 0 -> 1

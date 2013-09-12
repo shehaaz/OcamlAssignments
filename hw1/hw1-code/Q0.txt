@@ -1,0 +1,11 @@
+Scenario 1:
+
+This will be considered plagarism because Bob and Tom SEND their code to Hanna. They could have instead asked her to look over the code and explain to them verbally what is wrong. 
+
+Scenario 2: 
+
+There is no problem in sharing notes with fellow students, but the assignments should be posted after the submission deadline. 
+
+Scenario 3: 
+
+This is plagarism because Abbey sent Matt her solution in OCaml, she should have explained her thinking process to solve the problem and given him hints instead of outright sending him the solution.
