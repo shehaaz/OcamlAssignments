@@ -298,18 +298,20 @@ let rec intToBin b = match b with
 
    binToInt : bnum -> int *)
 
-let rec twoExp (m) = match m with 
-  |1 -> 2
-  |_ -> 2 * twoExp(m-1);; 
+let power(n,k) = 
+  let rec f (n,k,acc) = match k with 
+    |0 -> acc
+    |_ -> f(n,k-1,n*acc)
+in f (n,k,1);;
 
+  
 let rec binToInt (b) = 
   let rec f(b,m) = match (b,m) with
-    |(One y, 0) -> 1 + f(y, m+1)
-    |(One x, _) -> twoExp (m) + f(x,m+1)
+    |(One x, _) -> power(2,m) + f(x,m+1)
     |(Zero z, _) -> f(z,m+1)
     |(E, _) -> 0
-  in 
-     f(b,0);;
+in 
+  f(b,0);;
 
  
 
