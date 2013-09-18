@@ -42,10 +42,12 @@ let average list =
 
 let square x = x *. x 
 
-let rec diffSq (list,avg) = 
-  match list with
-  | [] -> 0.
-  | head::tail -> (square(head -. avg)) +. diffSq (tail,avg);;
+let diffSq (list,avg) = 
+  let rec f (list,avg,acc) = match list with 
+  | [] -> acc
+  | head::tail -> f (tail,avg,(acc +. square(head -. avg)))
+in f (list,avg,0.);; 
+
 
 let stDev list = 
   match list with
