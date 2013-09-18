@@ -268,10 +268,14 @@ type bnum = E | Zero of bnum | One of bnum
    
    intToBin : int -> bnum *)
 
-let rec intToBin b = match b with
-  |_ when b<=0 -> E
-  |x -> if (x mod 2 = 1) then One (intToBin (x/2))
-        else Zero (intToBin (x/2));;
+let intToBin b =
+  if(b=0) then Zero E
+  else
+  let rec f b = match b with
+         |_ when b=0 -> E
+         |x -> if (x mod 2 = 1) then One (f (x/2))
+                else Zero (f (x/2))
+  in f b;;
 
 (* Some test cases
 
