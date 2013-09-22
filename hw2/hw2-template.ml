@@ -27,7 +27,15 @@ exception NotImplemented
 
 (* repeated: int -> ('a -> 'a) -> 'a -> 'a *)
 
-let rec repeated n f = raise NotImplemented
+let rec repeated n f = 
+if(n>0) then
+   fun x -> 
+     let rec r(n,acc) = match n with
+       |0 -> acc
+       |y -> r(n-1,f acc)
+     in r(n-1,f x)
+else fun x -> f 0;;
+
 
 (* -----------------------------------------------------------------------------*)
 (* QUESTION 3: Maximum Likelihood                                               *)
