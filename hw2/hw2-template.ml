@@ -30,12 +30,28 @@ exception NotImplemented
 let rec repeated n f = 
 if(n>0) then
    fun x -> 
-     let rec r(n,acc) = match n with
+     let rec tail(n,acc) = match n with
        |0 -> acc
-       |y -> r(n-1,f acc)
-     in r(n-1,f x)
+       |y -> tail(y-1,f acc)
+     in tail(n-1,f x)
 else fun x -> f 0;;
 
+(*
+Test cases:
+
+#let t8 = repeated 3 (fun x -> x*2);;
+# t8 2;;
+- : int = 16
+
+#let square x = x*x;;
+# let sqr = repeated 2 square;;
+val sqr : int -> int = <fun>
+# sqr 2;;
+- : int = 16
+# sqr 3;;
+- : int = 81
+
+*)
 
 (* -----------------------------------------------------------------------------*)
 (* QUESTION 3: Maximum Likelihood                                               *)
