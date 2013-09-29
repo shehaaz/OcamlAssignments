@@ -85,11 +85,14 @@ let rec tabulate f n =
   tab n []
 
 
-let dist_table (marbelsTotal, marbelsDrawn) x = raise NotImplemented
+
+let dist_table (marbelsTotal, marbelsDrawn) x =
+ tabulate (fun n->(dist_black n x (marbelsTotal, marbelsDrawn))) marbelsTotal;;
 
 (* -----------------------------------------------------------------------------*)
 (* Compute the maximum of the dist_table. The maximum corresponds to the number *)
 (* of black marbels which is most likely to be in an urn *)
+
 
 let max_in_list l = 
   let rec max_in_list' pos l = match l with 
@@ -105,21 +108,34 @@ let max_in_list l =
 (* -----------------------------------------------------------------------------*)
 (* Q 3.2: Compute the distribution matrix                                       *)
 (* -----------------------------------------------------------------------------*)
-let dist_matrix (total, drawn) resultList = raise NotImplemented
+let rec dist_matrix (total, drawn) resultList = 
+  let aRow h = dist_table (total, drawn) h in
+    match resultList with
+    | [] -> []
+    | h::t -> if t!=[] then [aRow h] @ (dist_matrix (total, drawn) t)
+            else [aRow h];;
 
 
 (* -----------------------------------------------------------------------------*)
 (* Q 3.3: Test whether the matrix is empty                                      *)
 (* -----------------------------------------------------------------------------*)
-let emptyMatrix matrix = raise NotImplemented
 
+let emptyMatrix matrix = let flattenM = List.flatten matrix in
+  if List.length flattenM = 0 then true else false;;
 
 (* -----------------------------------------------------------------------------*)
 (* Q 3.4: Compute the combined distribution table                               *)
 (* -----------------------------------------------------------------------------*)
 
 
-let rec combined_dist_table matrix = raise NotImplemented
+let combined_dist_table matrix = 
+  let sum2lists list1 list2 = 
+    if list2 != [] then List.map2 (fun x -> fun y -> x *. y) list1 list2 
+    else list1 in
+      let rec sumManyLists matrix = match matrix with
+      | [] -> []
+      | h::t -> sum2lists h (sumManyLists t) in
+    sumManyLists matrix;;
 
 (* -----------------------------------------------------------------------------*)
 (* Maximum Likelihood                                                           *)
@@ -160,10 +176,14 @@ type 'a trie = Node of 'a * ('a trie) list | Empty
 (* -------------------------------------------------------------*)
 
 (* string_explode : string -> char list *)
-let string_explode s = raise NotImplemented
+let string_explode s = tabulate (fun n -> String.get s n) ((String.length s)-1);;
 
 (* string_implode : char list -> string *)
-let string_implode l = raise NotImplemented
+let string_implode l = 
+  let rec makeStringFromChar l acc= match l with
+    | []-> acc
+    | h::t -> makeStringFromChar t (acc ^ (Char.escaped h)) in
+  makeStringFromChar l "";;
 
 (* -------------------------------------------------------------*)
 (* QUESTION 4.2 : Insert a string into a trie  [15 points]      *) 
@@ -172,6 +192,9 @@ let string_implode l = raise NotImplemented
 (* Insert a word in a trie *)
 (* ins: char list * char trie -> char trie *)
 
+(*Examples*)
+let t1 = [Node('h', [Node('e', [Node('y', [Empty])])])];;
+let t2 = [Node('h', [Node('e', [Node('y', [Empty]); Node('l', [Node('l', [Empty])])])])];;
 
 (* Duplicate inserts are allowed *)
 let rec ins l t = raise NotImplemented 
