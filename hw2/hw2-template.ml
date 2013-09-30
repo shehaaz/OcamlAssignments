@@ -85,7 +85,6 @@ let rec tabulate f n =
   tab n []
 
 
-
 let dist_table (marbelsTotal, marbelsDrawn) x =
  tabulate (fun n->(dist_black n x (marbelsTotal, marbelsDrawn))) marbelsTotal;;
 
@@ -176,14 +175,15 @@ type 'a trie = Node of 'a * ('a trie) list | Empty
 (* -------------------------------------------------------------*)
 
 (* string_explode : string -> char list *)
-let string_explode s = tabulate (fun n -> String.get s n) ((String.length s)-1);;
+let string_explode s = 
+  tabulate (fun n -> String.get s n) (String.length s - 1);;
+
 
 (* string_implode : char list -> string *)
-let string_implode l = 
-  let rec makeStringFromChar l acc= match l with
-    | []-> acc
-    | h::t -> makeStringFromChar t (acc ^ (Char.escaped h)) in
-  makeStringFromChar l "";;
+let rec string_implode l = match l with
+  |[] -> ""
+  |hd::tl -> Char.escaped hd ^ string_implode tl;;
+       
 
 (* -------------------------------------------------------------*)
 (* QUESTION 4.2 : Insert a string into a trie  [15 points]      *) 
@@ -192,12 +192,8 @@ let string_implode l =
 (* Insert a word in a trie *)
 (* ins: char list * char trie -> char trie *)
 
-(*Examples*)
-let t1 = [Node('h', [Node('e', [Node('y', [Empty])])])];;
-let t2 = [Node('h', [Node('e', [Node('y', [Empty]); Node('l', [Node('l', [Empty])])])])];;
-
 (* Duplicate inserts are allowed *)
-let rec ins l t = raise NotImplemented 
+let rec ins l t =  raise NotImplemented
 
 (* insert : string -> (char trie) list -> (char trie) list *)
 let  insert s t = 
@@ -244,6 +240,15 @@ let findAll prefix trie_list =
 (* -------------------------------------------------------------*)
 (* TEST CASE                                                    *) 
 (* -------------------------------------------------------------*)
+(*
+
+(*
+Examples
+let t1 = [Node('h', [Node('e', [Node('y', [Empty])])])];;
+let t2 = [Node('h', [Node('e', [Node('y', [Empty]); Node('l', [Node('l', [Empty])])])])];;
+*)
+
+let t1 = Node('c',[Empty]);;
 
 let t = 
  [Node
@@ -254,6 +259,15 @@ let t =
 				 Node ('r',[Empty])]) ;
 		    Node ('a' , [Node ('r', [Empty; Node ('d' , [Empty])])])])])]
 
+
+let t2 = Node('b', [Node('e',[Node('e',[Empty])])]);;
+
+let t3 = Node('b', [Node('e',[Node('e',[Empty]),[Node('r',[Empty])]])]);;
+
+let t1 = [Node('h', [Node('e', [Node('y', [Empty])])])];;
+let t2 = [Node('h', [Node('e', [Node('y', [Empty]); Node('l', [Node('l', [Empty])])])])];;
+
+*)
 
 
 
