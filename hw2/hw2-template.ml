@@ -194,11 +194,15 @@ let rec string_implode l = match l with
 
 (* Duplicate inserts are allowed *)
 
-let rec ins l t = raise NotImplemented
+let rec ins l t = match (l,t) with 
+  |([],_) -> t
+  |(hd::tl,[Node(x,[y])]) -> if (hd=x) then [Node(x,[y;getTrie tl])] else t;;
 
 (* 
 Do a function that takes a 'a list and returns a 'a trie list
 And append that trie in "ins"
+# getTrie;;
+- : 'a list -> 'a trie = <fun>
 *)
 
 let rec getTrie l = match l with
@@ -215,11 +219,24 @@ let rec getTrie l = match l with
 
 TEST EXAMPLES:
 
-let t1 = [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);Node ('e', [Node ('l', [Empty])])])])];;
+let t_hello = 
+[Node ('h', [Node('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])])])];;
 
-let t1 = [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);getTrie['e';'l']])])];;
+# ins ['h';'o';'b';'o'] t_hello;;
+- : char trie list =
+[Node ('h',
+  [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])]);
+   Node ('o', [Node ('b', [Node ('o', [Empty])])])])]
+
+let t_hello_eel_1 = 
+[Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);Node ('e', [Node ('l', [Empty])])])])];;
+
+let let t_hello_eel_2 = 
+[Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);getTrie['e';'l']])])];;
 
 *)
+
+
 
 (* insert : string -> (char trie) list -> (char trie) list *)
 let  insert s t = 
