@@ -202,38 +202,22 @@ And append that trie in "ins"
 *)
 
 let rec getTrie l = match l with
-| [] -> [Empty]
-| hd::tl -> [Node (hd, getTrie tl)];; 
+| [] -> Empty
+| hd::tl -> Node (hd, [getTrie tl]);; 
 
 (*
+# getTrie;;
+- : 'a list -> 'a trie = <fun>
+
 # getTrie ['h';'e';'l';'l';'o'];;
 - : char trie list =
 [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])])])]
 
 TEST EXAMPLES:
 
-# getTrie ['h';'e';'l';'l';'o'];;
-- : char trie list =
-[Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])])])]
-# getTrie;;
-- : 'a list -> 'a trie list = <fun>
-# getTrie ['e';'l'];;
-- : char trie list = [Node ('e', [Node ('l', [Empty])])]
-# [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);getTrie ['e';'l']])])];;
-Characters 73-90:
-  [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);getTrie ['e';'l']])])];;
-                                                                           ^^^^^^^^^^^^^^^^^
-Error: This expression has type char trie list
-       but an expression was expected of type char trie
-# [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);[Node ('e', [Node ('l', [Empty])])]])])];;
-Characters 73-108:
-  [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);[Node ('e', [Node ('l', [Empty])])]])])];;
-                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Error: This expression has type 'a list
-       but an expression was expected of type char trie
-# [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);[Node ('e', [Node ('l', [Empty])])]])])];;
-Characters 73-108:
-  [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);[Node ('e', [Node ('l', [Empty])])]])])];;
+let t1 = [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);Node ('e', [Node ('l', [Empty])])])])];;
+
+let t1 = [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);getTrie['e';'l']])])];;
 
 *)
 
