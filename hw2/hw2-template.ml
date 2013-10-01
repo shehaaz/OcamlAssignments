@@ -193,7 +193,49 @@ let rec string_implode l = match l with
 (* ins: char list * char trie -> char trie *)
 
 (* Duplicate inserts are allowed *)
-let rec ins l t =  raise NotImplemented
+
+let rec ins l t = raise NotImplemented
+
+(* 
+Do a function that takes a 'a list and returns a 'a trie list
+And append that trie in "ins"
+*)
+
+let rec getTrie l = match l with
+| [] -> [Empty]
+| hd::tl -> [Node (hd, getTrie tl)];; 
+
+(*
+# getTrie ['h';'e';'l';'l';'o'];;
+- : char trie list =
+[Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])])])]
+
+TEST EXAMPLES:
+
+# getTrie ['h';'e';'l';'l';'o'];;
+- : char trie list =
+[Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])])])]
+# getTrie;;
+- : 'a list -> 'a trie list = <fun>
+# getTrie ['e';'l'];;
+- : char trie list = [Node ('e', [Node ('l', [Empty])])]
+# [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);getTrie ['e';'l']])])];;
+Characters 73-90:
+  [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);getTrie ['e';'l']])])];;
+                                                                           ^^^^^^^^^^^^^^^^^
+Error: This expression has type char trie list
+       but an expression was expected of type char trie
+# [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);[Node ('e', [Node ('l', [Empty])])]])])];;
+Characters 73-108:
+  [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);[Node ('e', [Node ('l', [Empty])])]])])];;
+                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Error: This expression has type 'a list
+       but an expression was expected of type char trie
+# [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);[Node ('e', [Node ('l', [Empty])])]])])];;
+Characters 73-108:
+  [Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);[Node ('e', [Node ('l', [Empty])])]])])];;
+
+*)
 
 (* insert : string -> (char trie) list -> (char trie) list *)
 let  insert s t = 
@@ -267,11 +309,12 @@ let t3 = Node('b', [Node('e',[Node('e',[Empty]),[Node('r',[Empty])]])]);;
 let t1 = [Node('h', [Node('e', [Node('y', [Empty])])])];;
 let t2 = [Node('h', [Node('e', [Node('y', [Empty]); Node('l', [Node('l', [Empty])])])])];;
 
+
+
+let t = [Node ('b', [Node ('r' , [Node ('e' , [Node ('e' , [Empty])])]); [Node('e',[Node('d',[Empty])])];
+])];;
+
 *)
-
-
-
-
 
 
 
