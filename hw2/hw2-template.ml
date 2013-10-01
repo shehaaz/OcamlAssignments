@@ -196,7 +196,7 @@ let rec string_implode l = match l with
 
 let rec ins l t = match (l,t) with 
   |([],_) -> t
-  |(hd::tl,[Node(x,[y])]) -> if (hd=x) then [Node(x,[y;getTrie tl])] else t;;
+  |(hd::s::tl,[Node(x,[Node(y,[z])])]) -> if (s!=y) then [Node(x,[Node(y,[z]);getTrie (s::tl)])] else ins tl [z];;
 
 (* 
 Do a function that takes a 'a list and returns a 'a trie list
