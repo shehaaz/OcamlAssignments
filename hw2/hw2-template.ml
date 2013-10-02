@@ -222,10 +222,12 @@ let rec ins charList trieList = match (charList, trieList) with
   |([], _)|(_,[]) | (_,[Empty]) -> trieList
   |(charHead::charTail), Empty::trieTail -> Empty::(ins charTail trieTail)
   |(charHead::charTail,Node (x, y)::nodeTail) -> 
+    if(charHead=x) then
                     if (checkExists (List.hd charTail) y) then 
                       let orderedSubTree = returnCharFirstElement y (List.hd charTail) [] 
                       in [Node (x, (ins charTail [(List.hd orderedSubTree)]) @ (List.tl orderedSubTree))]
-	            else [Node (x,(getTrie charTail)::y)];;  
+	            else [Node (x,(getTrie charTail)::y)]
+    else Node (x, y)::nodeTail @ [getTrie charList];;
 
  
  
@@ -237,6 +239,12 @@ let t_hello =
 [Node ('h', [Node('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])])])];;
 
 insert "helicopter" t_hello;;
+
+insert "low" t_hello;;
+
+let t = insert "monkey" t_hello;;
+
+ insert "low" t;;
 
 *)
 
