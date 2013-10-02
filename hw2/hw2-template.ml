@@ -287,6 +287,15 @@ let rec lookup s t =
 (* -------------------------------------------------------------*)
 (* Find all strings which share the prefix p *)
   
+let rec prefixExists char_list trie_list = match (char_list,trie_list) with
+|([], e) -> true 
+|(_,[]) | (_,[Empty]) -> false 
+| (charList, Empty::nodeTl) -> prefixExists charList nodeTl
+| (charHd::charTl,Node (x, y)::nodeTl)-> 
+              if(not(checkExists charHd ([Node (x, y)]))) then (false || prefixExists char_list nodeTl)
+              else (true && (prefixExists charTl y));;
+
+
 exception Error 
 
 let rec findAll' char_list  trie_list = raise NotImplemented
