@@ -271,6 +271,7 @@ let rec containsEmpty l = match l with
 let rec lkp char_list trie_list = match (char_list,trie_list) with
 |([], e) -> if(containsEmpty e) then true else false 
 |(_,[]) | (_,[Empty]) -> false 
+| (charList, Empty::nodeTl) -> lkp charList nodeTl
 | (charHd::charTl,Node (x, y)::nodeTl)-> 
               if(not(checkExists charHd ([Node (x, y)]))) then (false || lkp char_list nodeTl)
               else (true && (lkp charTl y));;
