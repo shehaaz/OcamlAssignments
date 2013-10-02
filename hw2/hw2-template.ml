@@ -189,30 +189,15 @@ let rec string_implode l = match l with
 (* QUESTION 4.2 : Insert a string into a trie  [15 points]      *) 
 (* -------------------------------------------------------------*)
 
-(* Insert a word in a trie *)
-(* ins: char list * (char trie) list -> (char trie) list *)
 
-(* Duplicate inserts are allowed *)
-
-let rec ins charList trieList = match (charList, trieList) with 
-  |([], _) -> trieList
-  |(_,[]) | (_,[Empty]) -> trieList
-  |(charHead::charTail), Empty::trieTail -> Empty::(ins charTail trieTail)
-  |(charHead::charTail,Node (x, y)::nodeTail) -> if (checkExists (List.hd charTail) y) then 
-                        let orderedSubTree = returnCharFirstElement y (List.hd charTail) [] 
-                        in [Node (x, (ins charTail [(List.hd orderedSubTree)]) @ (List.tl orderedSubTree))]
-	                     else [Node (x,(getTrie charTail)::y)];; 
-
- 
 let rec returnCharFirstElement trieList char acc = match trieList with
       |[] -> acc
       |Empty::tl -> returnCharFirstElement tl char (Empty::acc)
       |Node(x,y)::tl -> if x = char then Node(x,y)::(returnCharFirstElement tl char acc) 
-	                else returnCharFirstElement tl char (Node(x,y)::acc);;
+	                      else returnCharFirstElement tl char (Node(x,y)::acc);;
 
 let rec checkExists char list = match list with 
-  |[] -> false
-  |Empty::_ -> false
+  |[] |Empty::_ -> false
   |Node(x,_)::tl -> if(x = char) then true else checkExists char tl;;
 
 
@@ -225,8 +210,27 @@ And append that trie in "ins"
 
 let rec getTrie l = match l with
 | [] -> Empty
-| hd::tl -> Node (hd, [getTrie tl]);; 
+| hd::tl -> Node (hd, [getTrie tl]);;
 
+
+(* Insert a word in a trie *)
+(* ins: char list * (char trie) list -> (char trie) list *)
+
+(* Duplicate inserts are allowed *)
+
+let rec ins charList trieList = match (charList, trieList) with 
+  |([], _)|(_,[]) | (_,[Empty]) -> trieList
+  |(charHead::charTail), Empty::trieTail -> Empty::(ins charTail trieTail)
+  |(charHead::charTail,Node (x, y)::nodeTail) -> 
+                    if (checkExists (List.hd charTail) y) then 
+                      let orderedSubTree = returnCharFirstElement y (List.hd charTail) [] 
+                      in [Node (x, (ins charTail [(List.hd orderedSubTree)]) @ (List.tl orderedSubTree))]
+	            else [Node (x,(getTrie charTail)::y)];;  
+
+ 
+ 
+let t_hello = 
+[Node ('h', [Node('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])])])];;
 
 (*
 # getTrie;;
