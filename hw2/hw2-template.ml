@@ -227,7 +227,7 @@ let rec ins charList trieList = match (charList, trieList) with
                       let orderedSubTree = returnCharFirstElement y (List.hd charTail) [] 
                       in [Node (x, (ins charTail [(List.hd orderedSubTree)]) @ (List.tl orderedSubTree))]
 	            else [Node (x,(getTrie charTail)::y)]
-    else Node (x, y)::nodeTail @ [getTrie charList];;
+    else trieList @ [getTrie charList];;
 
  
  
@@ -244,7 +244,7 @@ insert "low" t_hello;;
 
 let t = insert "monkey" t_hello;;
 
- insert "low" t;;
+insert "low" t;;
 
 *)
 
