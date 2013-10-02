@@ -269,14 +269,16 @@ let rec containsEmpty l = match l with
 
 (* lkp : char list * (char trie) list -> bool *)
 let rec lkp char_list trie_list = match (char_list,trie_list) with
-|([], _) -> true
-|(_,[]) | (_,[Empty]) -> false
+|([], _) -> true (*All letters match. return true*)
+|(_,[]) | (_,[Empty]) -> false (*Went throught all Nodes and there are more stuff in the word: return false*)
 | (charHd::charTl,Node (x, y)::nodeTl)-> 
               if(not(checkExists charHd ([Node (x, y)]))) then (false || lkp char_list nodeTl)
               else (true && (lkp charTl y));;
 
 let rec lookup s t = 
-  let l = string_explode s in (* l = char list *)    
+  if(String.length s < 1) then false 
+  else
+    let l = string_explode s in (* l = char list *)    
     lkp l t
 
 (* -------------------------------------------------------------*)
