@@ -268,7 +268,12 @@ let rec containsEmpty l = match l with
   | []       -> false
 
 (* lkp : char list * (char trie) list -> bool *)
-let rec lkp char_list trie_list = raise NotImplemented
+let rec lkp char_list trie_list = match (char_list,trie_list) with
+|([], _) -> true
+|(_,[]) | (_,[Empty]) -> false
+| (charHd::charTl,Node (x, y)::nodeTl)-> 
+              if(not(checkExists charHd ([Node (x, y)]))) then (false || lkp char_list nodeTl)
+              else (true && (lkp charTl y));;
 
 let rec lookup s t = 
   let l = string_explode s in (* l = char list *)    
