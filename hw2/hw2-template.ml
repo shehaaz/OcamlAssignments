@@ -219,15 +219,15 @@ let rec getTrie l = match l with
 (* Duplicate inserts are allowed *)
 
 let rec ins charList trieList = match (charList, trieList) with 
-  |([], _)|(_,[]) | (_,[Empty]) -> trieList
+  |([], _)|(_,[]) | (_,[Empty]) -> trieList @ [getTrie charList]
   |(charHead::charTail), Empty::trieTail -> Empty::(ins charTail trieTail)
   |(charHead::charTail,Node (x, y)::nodeTail) -> 
-    if(charHead=x) then
+    if(checkExists charHead ([Node (x, y)])) then
                     if (checkExists (List.hd charTail) y) then 
                       let orderedSubTree = returnCharFirstElement y (List.hd charTail) [] 
                       in [Node (x, (ins charTail [(List.hd orderedSubTree)]) @ (List.tl orderedSubTree))]
 	            else [Node (x,(getTrie charTail)::y)]
-    else trieList @ [getTrie charList];;
+    else [Node (x, y)] @ ins charList nodeTail;;
 
  
  
@@ -238,13 +238,15 @@ TEST EXAMPLES:
 let t_hello = 
 [Node ('h', [Node('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])])])];;
 
-insert "helicopter" t_hello;;
+let t = insert "help" t_hello;;
 
-insert "low" t_hello;;
+let t = insert "hollow" t;;
 
-let t = insert "monkey" t_hello;;
+let t = insert "helicopter" t;;
 
-insert "low" t;;
+let t = insert "monkey" t;;
+
+let t = insert "money" t;;
 
 *)
 
