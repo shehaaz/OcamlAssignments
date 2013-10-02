@@ -229,33 +229,14 @@ let rec ins charList trieList = match (charList, trieList) with
 
  
  
-let t_hello = 
-[Node ('h', [Node('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])])])];;
-
 (*
-# getTrie;;
-- : 'a list -> 'a trie = <fun>
-
-# getTrie ['h';'e';'l';'l';'o'];;
-- : char trie list =
-[Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])])])]
 
 TEST EXAMPLES:
 
 let t_hello = 
 [Node ('h', [Node('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])])])];;
 
-# ins ['h';'o';'b';'o'] t_hello;;
-- : char trie list =
-[Node ('h',
-  [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])]);
-   Node ('o', [Node ('b', [Node ('o', [Empty])])])])]
-
-let t_hello_eel_1 = 
-[Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);Node ('e', [Node ('l', [Empty])])])])];;
-
-let let t_hello_eel_2 = 
-[Node ('h', [Node ('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])]);getTrie['e';'l']])])];;
+insert "helicopter" t_hello;;
 
 *)
 
