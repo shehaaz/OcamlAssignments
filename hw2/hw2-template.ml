@@ -287,7 +287,9 @@ let rec lookup s t =
 (* -------------------------------------------------------------*)
 (* Find all strings which share the prefix p *)
   
-
+(*
+BUG: If the Next letter in the prefix is shared by more than two words is Fails
+*)
 exception Error 
 
 let rec makeList t = match t with
