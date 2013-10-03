@@ -314,9 +314,9 @@ let rec findAllWords' trieList stack charStack acc levelStack = match (trieList,
       let number = List.length newCharStack in
       let newLevelStack = if newStack != stack then (mapToListOfConstantNumbers (List.tl y) (number)) @ levelStack 
       else (mapToListOfConstantNumbers (List.tl y) 1) @ levelStack in
-      findAllWords newTrieList newStack newCharStack acc newLevelStack
+      findAllWords' newTrieList newStack newCharStack acc newLevelStack
   |([Empty], []) -> charStack::acc
-  |([Empty], st::tl) -> findAllWords [st] tl (letFirstNChars charStack (List.hd levelStack)) (charStack::acc) (List.tl levelStack)
+  |([Empty], st::tl) -> findAllWords' [st] tl (letFirstNChars charStack (List.hd levelStack)) (charStack::acc) (List.tl levelStack)
   |(trieHd::trieTl, _) -> raise Error 
 
 let findAllWords trieList =  findAllWords' trieList [] [] [[]] []
