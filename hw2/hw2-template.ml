@@ -297,12 +297,13 @@ let rec makeList t = match t with
   |Empty::_ -> []
   |[] -> [];;
 
-let rec talkToMakeList t = match t with
-|listHd::listTl -> makeList [listHd] :: talkToMakeList listTl
-|[] -> [];;
+let rec talkToMakeList t =  match t with
+  |Node(hd,tl)::nodeTl -> ((List.map (fun y -> hd::y) (talkToMakeList tl)) @ (talkToMakeList nodeTl))
+  |Empty::nodeTl -> [makeList nodeTl]
+  |[] -> [];;
 
 let rec getCharList t = match t with
-|Node (hd, tl)::nodeTl -> List.map (fun y -> hd::y) (talkToMakeList tl) @ getCharList nodeTl
+|Node (hd, tl)::nodeTl -> (List.map (fun y -> hd::y) (talkToMakeList tl)) @ getCharList nodeTl
 |Empty::nodeTl -> getCharList nodeTl  
 |[] -> [];;
 
@@ -324,43 +325,22 @@ let findAll prefix trie_list =
      Error -> print_string "No word with this prefix found\n" ; []
   end
 
- [Node ('e', [Node ('y', [Empty]); Empty])]
+
 
 (*
 Con'sing technique:
 
-  [Node ('e', [Node ('y', [Empty]); Empty]);
-   Node ('k', [Node ('e', [Node ('y', [Empty])])])]
+let t1 = [Node ('o',
+  [Node ('n',
+    [Node ('e', [Node ('y', [Empty])]);
+     Node ('k', [Node ('e', [Node ('y', [Empty])])])])])];;
 
-  [['e';'y'];[]] @  [['k';'e';'y']];;
+let t2 =  [Node ('n',
+      [Node ('e', [Node ('y', [Empty])]);
+       Node ('k', [Node ('e', [Node ('y', [Empty])])])])];;
 
-[Node ('n',
-  [Node ('e', [Node ('y', [Empty])]);
-   Node ('k', [Node ('e', [Node ('y', [Empty])])])])]
-
-List.map (fun y -> 'n'::y) [['e';'y'];['k';'e';'y']];;
-
-# ['y']::[['l';'l']];;
-- : char list list = [['y']; ['l'; 'l']]
--------------------------
-findAll' ['m';'o'] t;;
-
-[Node ('n',
-  [Node ('e', [Node ('y', [Empty])]);
-   Node ('k', [Node ('e', [Node ('y', [Empty])])])])]
-
-[['n';'e';'y'];['n';'k';'e';'y']]
--------------------------
-# findAll' ['h';'e'] t;;
-- : char trie list =
-[Node ('l',
-  [Node ('i',
-    [Node ('c',
-      [Node ('o',
-        [Node ('p', [Node ('t', [Node ('e', [Node ('r', [Empty])])])])])])]);
-   Node ('p', [Empty]); Node ('l', [Node ('o', [Empty])])])]
-
-[['l';'i';'c';'o';'p';'t';'e';'r'];['p'];['l';'o']]
+let t3 =  [Node ('e', [Node ('y', [Empty])]);
+     Node ('k', [Node ('e', [Node ('y', [Empty])])])];;
 *)
 
 
