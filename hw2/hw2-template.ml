@@ -290,17 +290,17 @@ let rec lookup s t =
 
 exception Error 
 
-let rec f t = match t with
-  |[Node(x,y)] -> x::f y
+let rec makeList t = match t with
+  |[Node(x,y)] -> x::makeList y
   |Empty::_ -> []
   |[] -> [];;
 
 let rec getCharList t = match t with
-|listHd::listTl -> f [listHd] :: getCharList listTl
+|listHd::listTl -> makeList [listHd] :: getCharList listTl
 |[] -> [];;
 
 let rec findAll' char_list  trie_list = match (char_list,trie_list) with
-|([], t) ->  getCharList t
+|([], t) -> getCharList t
 |(_,[]) | (_,[Empty]) -> raise Error  
 |(charList, Empty::nodeTl) ->  findAll' charList nodeTl
 |(charHd::charTl,Node (x, y)::nodeTl)-> 
@@ -323,7 +323,25 @@ Con'sing technique:
 
 # ['y']::[['l';'l']];;
 - : char list list = [['y']; ['l'; 'l']]
+-------------------------
+findAll' ['m';'o'] t;;
 
+[Node ('n',
+  [Node ('e', [Node ('y', [Empty])]);
+   Node ('k', [Node ('e', [Node ('y', [Empty])])])])]
+
+[['n';'e';'y'];['n';'k';'e';'y']]
+-------------------------
+# findAll' ['h';'e'] t;;
+- : char trie list =
+[Node ('l',
+  [Node ('i',
+    [Node ('c',
+      [Node ('o',
+        [Node ('p', [Node ('t', [Node ('e', [Node ('r', [Empty])])])])])])]);
+   Node ('p', [Empty]); Node ('l', [Node ('o', [Empty])])])]
+
+[['l';'i';'c';'o';'p';'t';'e';'r'];['p'];['l';'o']]
 *)
 
 
