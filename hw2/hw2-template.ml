@@ -92,9 +92,10 @@ let dist_table (marbelsTotal, marbelsDrawn) x =
 (* Compute the maximum of the dist_table. The maximum corresponds to the number *)
 (* of black marbels which is most likely to be in an urn *)
 
-
+exception EmptyListError
 let max_in_list l = 
   let rec max_in_list' pos l = match l with 
+    | [] -> raise EmptyListError
     | [h]  -> (pos, h)
     | h::t -> 
       let (q, mx) = max_in_list' (pos+1) t in 
@@ -291,34 +292,60 @@ let rec lookup s t =
 BUG: If the Next letter in the prefix is shared by more than two words is Fails
 *)
 exception Error 
-
+exception ErrorDifferentFirstLetter
+exception ErrorEmptyList
+(*
+mapToListOfConstantNumber
+Takes a list and maps it to a list of same length with a constant value
+It is meant to be used with n as an integer value. It is important to be used
+in the findAllWords' function, to help creating the stack of levels.
+*)
 let mapToListOfConstantNumbers list n = List.map (fun x -> n) list;;
 
+(*
+Takes a list of chars and a number, the number should be less or equal the length
+of the list, and it returns a list with the first n chars of the original list
+letFirstNChars ['a'; 'b'; 'c';] 2 -> ['a'; 'b';]
+*)
 let rec letFirstNChars charList n = match (charList, n) with
   | ([], _) -> [] 
   | (hd::tl, n) -> if n > 0 then hd::(letFirstNChars tl (n-1)) else [];;
+
+(*
+Returns a char list list in which each inner list is a word of the trie list given
+For this function, there must me one common letter for all the words.
+*)
 
 let rec findAllWords' trieList stack charStack acc levelStack = match (trieList, stack) with
   |([Node(x,y)], _) -> 
       let newCharStack = (charStack @ [x]) in
       let newTrieList = [List.hd y] in
       let newStack = ((List.tl y) @ stack) in
-      let number = List.length newCharStack in
-      let newLevelStack = if newStack != stack then (mapToListOfConstantNumbers (List.tl y) (number)) @ levelStack 
+      let levelNumber = List.length newCharStack in
+      let newLevelStack = if newStack != stack then (mapToListOfConstantNumbers (List.tl y) (levelNumber)) @ levelStack 
       else (mapToListOfConstantNumbers (List.tl y) 1) @ levelStack in
       findAllWords' newTrieList newStack newCharStack acc newLevelStack
   |([Empty], []) -> charStack::acc
   |([Empty], st::tl) -> findAllWords' [st] tl (letFirstNChars charStack (List.hd levelStack)) (charStack::acc) (List.tl levelStack)
-  |(trieHd::trieTl, _) -> raise Error ;;
+  |(trieHd::trieTl, _) -> raise ErrorDifferentFirstLetter
+  |([], _) -> raise ErrorEmptyList
 
+(*Calls findAllWords' with the initial values for arguments*)
+let findAllWords trieList =  findAllWords' trieList [] [] [] [];;
 
-let findAllWords trieList =  findAllWords' trieList [] [] [[]] [];;
-
+(*When a trie list of several Node elements is given, it applies to each the function
+findAllWords
+Example:
+let t2 =  [Node ('e', [Node ('y', [Empty])]);
+       Node ('k', [Node ('e', [Node ('y', [Empty])])])];;
+findAllWords would raise an error
+It is called in findAll'
+*)
 let rec separateWords trie_list = match trie_list with 
   |[] -> []
   |Node (x, y)::nodeTl -> (findAllWords [Node (x, y)]) @ separateWords nodeTl;;
 
-
+(*Same thing as lookup, but sends the resulting trie list to separateWords*)
 let rec findAll' char_list  trie_list = match (char_list,trie_list) with
 |([], t) -> separateWords t
 |(_,[]) | (_,[Empty]) -> raise Error  
