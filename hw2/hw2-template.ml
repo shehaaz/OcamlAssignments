@@ -314,13 +314,13 @@ let rec findAllWords' trieList stack charStack acc levelStack = match (trieList,
 
 let findAllWords trieList =  findAllWords' trieList [] [] [[]] [];;
 
-let rec seperateWords trie_list = match trie_list with 
+let rec separateWords trie_list = match trie_list with 
   |[] -> []
-  |Node (x, y)::nodeTl -> (findAllWords [Node (x, y)]) @ seperateWords nodeTl;;
+  |Node (x, y)::nodeTl -> (findAllWords [Node (x, y)]) @ separateWords nodeTl;;
 
 
 let rec findAll' char_list  trie_list = match (char_list,trie_list) with
-|([], t) -> seperateWords t
+|([], t) -> separateWords t
 |(_,[]) | (_,[Empty]) -> raise Error  
 |(charList, Empty::nodeTl) ->  findAll' charList nodeTl
 |(charHd::charTl,Node (x, y)::nodeTl)-> 
