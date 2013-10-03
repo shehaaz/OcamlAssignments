@@ -287,30 +287,25 @@ let rec lookup s t =
 (* -------------------------------------------------------------*)
 (* Find all strings which share the prefix p *)
   
-let rec prefixExists char_list trie_list = match (char_list,trie_list) with
-|([], e) -> true 
-|(_,[]) | (_,[Empty]) -> false 
-| (charList, Empty::nodeTl) -> prefixExists charList nodeTl
-| (charHd::charTl,Node (x, y)::nodeTl)-> 
-              if(not(checkExists charHd ([Node (x, y)]))) then (false || prefixExists char_list nodeTl)
-              else (true && (prefixExists charTl y));;
-
 
 exception Error 
 
+let rec f t = match t with
+  |[Node(x,y)] -> x::f y
+  |Empty::_ -> []
+  |[] -> [];;
+
 let rec getCharList t = match t with
-|Node (x, y)::listTl ->  x::getCharList y @ getCharList listTl
-|Empty::z -> getCharList z
+|listHd::listTl -> f [listHd] :: getCharList listTl
 |[] -> [];;
 
 let rec findAll' char_list  trie_list = match (char_list,trie_list) with
-|([], t) -> t
+|([], t) ->  getCharList t
 |(_,[]) | (_,[Empty]) -> raise Error  
 |(charList, Empty::nodeTl) ->  findAll' charList nodeTl
 |(charHd::charTl,Node (x, y)::nodeTl)-> 
               if(not(checkExists charHd ([Node (x, y)]))) then (findAll' char_list nodeTl)
               else (findAll' charTl y);;
-
 
 let findAll prefix trie_list = 
   begin try
@@ -323,20 +318,21 @@ let findAll prefix trie_list =
   end
 
 
+(*
+Con'sing technique:
+
+# ['y']::[['l';'l']];;
+- : char list list = [['y']; ['l'; 'l']]
+
+*)
+
+
 (* -------------------------------------------------------------*)
 (* TEST CASE                                                    *) 
 (* -------------------------------------------------------------*)
 (*
 
-(*
-Examples
-let t1 = [Node('h', [Node('e', [Node('y', [Empty])])])];;
-let t2 = [Node('h', [Node('e', [Node('y', [Empty]); Node('l', [Node('l', [Empty])])])])];;
-*)
 
-findAll' ['m';'o';'n'] t;;
-
-let t1 = Node('c',[Empty]);;
 
 let t = 
  [Node
@@ -348,17 +344,7 @@ let t =
 		    Node ('a' , [Node ('r', [Empty; Node ('d' , [Empty])])])])])]
 
 
-let t2 = Node('b', [Node('e',[Node('e',[Empty])])]);;
 
-let t3 = Node('b', [Node('e',[Node('e',[Empty]),[Node('r',[Empty])]])]);;
-
-let t1 = [Node('h', [Node('e', [Node('y', [Empty])])])];;
-let t2 = [Node('h', [Node('e', [Node('y', [Empty]); Node('l', [Node('l', [Empty])])])])];;
-
-
-
-let t = [Node ('b', [Node ('r' , [Node ('e' , [Node ('e' , [Empty])])]); [Node('e',[Node('d',[Empty])])];
-])];;
 
 *)
 
