@@ -297,7 +297,7 @@ let rec makeList t = match t with
   |Empty::_ -> []
   |[] -> [];;
 
-let rec getCharList t = match t with
+let rec getCharList trieList = match trieList with
 |listHd::listTl -> makeList [listHd] :: getCharList listTl
 |[] -> [];;
 
@@ -309,6 +309,54 @@ let rec findAll' char_list  trie_list = match (char_list,trie_list) with
               if(not(checkExists charHd ([Node (x, y)]))) then (findAll' char_list nodeTl)
               else (findAll' charTl y);;
 
+let getFirstCharOfTrie trieList = match trieList with
+  | [] -> []
+  | Empty::trieTail -> []
+  | Node(x, _)::trieTail -> [x]
+
+let rec getAllCharOfALevel upperTrieList = match upperTrieList with
+  | [] -> []
+  | [Empty] -> []
+  | trieHd::trieTl -> (getFirstCharOfTrie [trieHd]) @ (getAllCharOfALevel trieTl)
+
+let rec addListToChar char charList = match charList with
+  | [] -> [[]]
+  | hd::[] -> [char::hd::[]]
+  | hd::tail -> [char::hd::[]] @ (addListToChar char tail)
+
+let rec returnWithoutLastOfList list = 
+  if list==[] then [] else List.rev (List.tl (List.rev list))
+
+let rec returnPrefix charList1 charList2 = match (charList1, charList2) with
+  |([], []) -> []
+  |(_, []) -> []
+  |([], _) -> []
+  |(hd1::tl1, hd2::tl2) -> if hd1 = hd2 then hd1::(returnPrefix tl1 tl2) else []
+
+let mapToListOfConstantNumbers list n = List.map (fun x -> n) list;;
+
+let rec letFirstNChars charList n = match (charList, n) with
+  | ([], _) -> [] 
+  | (hd::tl, n) -> if n > 0 then hd::(letFirstNChars tl (n-1)) else []
+exception Error1
+exception Error2
+
+let rec findAllWords trieList stack charStack acc levelStack = match (trieList, stack) with
+  |([Node(x,y)], _) -> 
+      (*1. *)
+      let newCharStack = (charStack @ [x]) in
+      let newTrieList = [List.hd y] in
+      let newStack = ((List.tl y) @ stack) in
+      let number = List.length newCharStack in
+      let newLevelStack = if newStack != stack then (mapToListOfConstantNumbers (List.tl y) (number)) @ levelStack 
+      else (mapToListOfConstantNumbers (List.tl y) 1) @ levelStack in
+      findAllWords newTrieList newStack newCharStack acc newLevelStack
+  |([Empty], []) -> charStack::acc
+  |([Empty], st::tl) -> 
+      findAllWords [st] tl (letFirstNChars charStack (List.hd levelStack)) (charStack::acc) (List.tl levelStack)
+  |(trieHd::trieTl, _) -> raise Error1(*findAllWords [trieHd] (trieTl @ stack) charStack acc*)
+  (*|([], []) -> acc
+*)
 let findAll prefix trie_list = 
   begin try
     let char_list     = string_explode prefix  in 
