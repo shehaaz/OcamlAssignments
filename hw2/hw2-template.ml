@@ -297,8 +297,13 @@ let rec makeList t = match t with
   |Empty::_ -> []
   |[] -> [];;
 
+let rec talkToMakeList t = match t with
+|listHd::listTl -> makeList [listHd] :: talkToMakeList listTl
+|[] -> [];;
+
 let rec getCharList t = match t with
-|listHd::listTl -> makeList [listHd] :: getCharList listTl
+|Node (hd, tl)::nodeTl -> List.map (fun y -> hd::y) (talkToMakeList tl) @ getCharList nodeTl
+|Empty::nodeTl -> getCharList nodeTl  
 |[] -> [];;
 
 let rec findAll' char_list  trie_list = match (char_list,trie_list) with
@@ -319,9 +324,21 @@ let findAll prefix trie_list =
      Error -> print_string "No word with this prefix found\n" ; []
   end
 
+ [Node ('e', [Node ('y', [Empty]); Empty])]
 
 (*
 Con'sing technique:
+
+  [Node ('e', [Node ('y', [Empty]); Empty]);
+   Node ('k', [Node ('e', [Node ('y', [Empty])])])]
+
+  [['e';'y'];[]] @  [['k';'e';'y']];;
+
+[Node ('n',
+  [Node ('e', [Node ('y', [Empty])]);
+   Node ('k', [Node ('e', [Node ('y', [Empty])])])])]
+
+List.map (fun y -> 'n'::y) [['e';'y'];['k';'e';'y']];;
 
 # ['y']::[['l';'l']];;
 - : char list list = [['y']; ['l'; 'l']]
