@@ -292,19 +292,11 @@ BUG: If the Next letter in the prefix is shared by more than two words is Fails
 *)
 exception Error 
 
-let rec findAll' char_list  trie_list = match (char_list,trie_list) with
-|([], t) -> findAllWords t
-|(_,[]) | (_,[Empty]) -> raise Error  
-|(charList, Empty::nodeTl) ->  findAll' charList nodeTl
-|(charHd::charTl,Node (x, y)::nodeTl)-> 
-              if(not(checkExists charHd ([Node (x, y)]))) then (findAll' char_list nodeTl)
-              else (findAll' charTl y);;
-
 let mapToListOfConstantNumbers list n = List.map (fun x -> n) list;;
 
 let rec letFirstNChars charList n = match (charList, n) with
   | ([], _) -> [] 
-  | (hd::tl, n) -> if n > 0 then hd::(letFirstNChars tl (n-1)) else []
+  | (hd::tl, n) -> if n > 0 then hd::(letFirstNChars tl (n-1)) else [];;
 
 let rec findAllWords' trieList stack charStack acc levelStack = match (trieList, stack) with
   |([Node(x,y)], _) -> 
@@ -317,9 +309,24 @@ let rec findAllWords' trieList stack charStack acc levelStack = match (trieList,
       findAllWords' newTrieList newStack newCharStack acc newLevelStack
   |([Empty], []) -> charStack::acc
   |([Empty], st::tl) -> findAllWords' [st] tl (letFirstNChars charStack (List.hd levelStack)) (charStack::acc) (List.tl levelStack)
-  |(trieHd::trieTl, _) -> raise Error 
+  |(trieHd::trieTl, _) -> raise Error ;;
 
-let findAllWords trieList =  findAllWords' trieList [] [] [[]] []
+
+let findAllWords trieList =  findAllWords' trieList [] [] [[]] [];;
+
+let rec seperateWords trie_list = match trie_list with 
+  |[] -> []
+  |Node (x, y)::nodeTl -> (findAllWords [Node (x, y)]) @ seperateWords nodeTl;;
+
+
+let rec findAll' char_list  trie_list = match (char_list,trie_list) with
+|([], t) -> seperateWords t
+|(_,[]) | (_,[Empty]) -> raise Error  
+|(charList, Empty::nodeTl) ->  findAll' charList nodeTl
+|(charHd::charTl,Node (x, y)::nodeTl)-> 
+              if(not(checkExists charHd ([Node (x, y)]))) then (findAll' char_list nodeTl)
+              else (findAll' charTl y);;
+
 
 let findAll prefix trie_list = 
   begin try
@@ -329,7 +336,7 @@ let findAll prefix trie_list =
       List.map (fun w -> prefix^w) postfix_words
   with
      Error -> print_string "No word with this prefix found\n" ; []
-  end
+  end;;
 
 
 
