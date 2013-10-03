@@ -292,58 +292,22 @@ BUG: If the Next letter in the prefix is shared by more than two words is Fails
 *)
 exception Error 
 
-let rec makeList t = match t with
-  |[Node(x,y)] -> x::makeList y
-  |Empty::_ -> []
-  |[] -> [];;
-
-let rec getCharList trieList = match trieList with
-|listHd::listTl -> makeList [listHd] :: getCharList listTl
-|[] -> [];;
-
 let rec findAll' char_list  trie_list = match (char_list,trie_list) with
-|([], t) -> getCharList t
+|([], t) -> findAllWords t
 |(_,[]) | (_,[Empty]) -> raise Error  
 |(charList, Empty::nodeTl) ->  findAll' charList nodeTl
 |(charHd::charTl,Node (x, y)::nodeTl)-> 
               if(not(checkExists charHd ([Node (x, y)]))) then (findAll' char_list nodeTl)
               else (findAll' charTl y);;
 
-let getFirstCharOfTrie trieList = match trieList with
-  | [] -> []
-  | Empty::trieTail -> []
-  | Node(x, _)::trieTail -> [x]
-
-let rec getAllCharOfALevel upperTrieList = match upperTrieList with
-  | [] -> []
-  | [Empty] -> []
-  | trieHd::trieTl -> (getFirstCharOfTrie [trieHd]) @ (getAllCharOfALevel trieTl)
-
-let rec addListToChar char charList = match charList with
-  | [] -> [[]]
-  | hd::[] -> [char::hd::[]]
-  | hd::tail -> [char::hd::[]] @ (addListToChar char tail)
-
-let rec returnWithoutLastOfList list = 
-  if list==[] then [] else List.rev (List.tl (List.rev list))
-
-let rec returnPrefix charList1 charList2 = match (charList1, charList2) with
-  |([], []) -> []
-  |(_, []) -> []
-  |([], _) -> []
-  |(hd1::tl1, hd2::tl2) -> if hd1 = hd2 then hd1::(returnPrefix tl1 tl2) else []
-
 let mapToListOfConstantNumbers list n = List.map (fun x -> n) list;;
 
 let rec letFirstNChars charList n = match (charList, n) with
   | ([], _) -> [] 
   | (hd::tl, n) -> if n > 0 then hd::(letFirstNChars tl (n-1)) else []
-exception Error1
-exception Error2
 
-let rec findAllWords trieList stack charStack acc levelStack = match (trieList, stack) with
+let rec findAllWords' trieList stack charStack acc levelStack = match (trieList, stack) with
   |([Node(x,y)], _) -> 
-      (*1. *)
       let newCharStack = (charStack @ [x]) in
       let newTrieList = [List.hd y] in
       let newStack = ((List.tl y) @ stack) in
@@ -352,11 +316,11 @@ let rec findAllWords trieList stack charStack acc levelStack = match (trieList, 
       else (mapToListOfConstantNumbers (List.tl y) 1) @ levelStack in
       findAllWords newTrieList newStack newCharStack acc newLevelStack
   |([Empty], []) -> charStack::acc
-  |([Empty], st::tl) -> 
-      findAllWords [st] tl (letFirstNChars charStack (List.hd levelStack)) (charStack::acc) (List.tl levelStack)
-  |(trieHd::trieTl, _) -> raise Error1(*findAllWords [trieHd] (trieTl @ stack) charStack acc*)
-  (*|([], []) -> acc
-*)
+  |([Empty], st::tl) -> findAllWords [st] tl (letFirstNChars charStack (List.hd levelStack)) (charStack::acc) (List.tl levelStack)
+  |(trieHd::trieTl, _) -> raise Error 
+
+let findAllWords trieList =  findAllWords' trieList [] [] [[]] []
+
 let findAll prefix trie_list = 
   begin try
     let char_list     = string_explode prefix  in 
@@ -368,30 +332,21 @@ let findAll prefix trie_list =
   end
 
 
+
 (*
 Con'sing technique:
 
-# ['y']::[['l';'l']];;
-- : char list list = [['y']; ['l'; 'l']]
--------------------------
-findAll' ['m';'o'] t;;
+let t1 = [Node ('o',
+  [Node ('n',
+    [Node ('e', [Node ('y', [Empty])]);
+     Node ('k', [Node ('e', [Node ('y', [Empty])])])])])];;
 
-[Node ('n',
-  [Node ('e', [Node ('y', [Empty])]);
-   Node ('k', [Node ('e', [Node ('y', [Empty])])])])]
+let t2 =  [Node ('n',
+      [Node ('e', [Node ('y', [Empty])]);
+       Node ('k', [Node ('e', [Node ('y', [Empty])])])])];;
 
-[['n';'e';'y'];['n';'k';'e';'y']]
--------------------------
-# findAll' ['h';'e'] t;;
-- : char trie list =
-[Node ('l',
-  [Node ('i',
-    [Node ('c',
-      [Node ('o',
-        [Node ('p', [Node ('t', [Node ('e', [Node ('r', [Empty])])])])])])]);
-   Node ('p', [Empty]); Node ('l', [Node ('o', [Empty])])])]
-
-[['l';'i';'c';'o';'p';'t';'e';'r'];['p'];['l';'o']]
+let t3 =  [Node ('e', [Node ('y', [Empty])]);
+     Node ('k', [Node ('e', [Node ('y', [Empty])])])];;
 *)
 
 
