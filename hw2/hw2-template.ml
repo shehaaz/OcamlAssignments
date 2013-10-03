@@ -298,7 +298,19 @@ let rec prefixExists char_list trie_list = match (char_list,trie_list) with
 
 exception Error 
 
-let rec findAll' char_list  trie_list = raise NotImplemented
+let rec getCharList t = match t with
+|Node (x, y)::listTl ->  x::getCharList y @ getCharList listTl
+|Empty::z -> getCharList z
+|[] -> [];;
+
+let rec findAll' char_list  trie_list = match (char_list,trie_list) with
+|([], t) -> t
+|(_,[]) | (_,[Empty]) -> raise Error  
+|(charList, Empty::nodeTl) ->  findAll' charList nodeTl
+|(charHd::charTl,Node (x, y)::nodeTl)-> 
+              if(not(checkExists charHd ([Node (x, y)]))) then (findAll' char_list nodeTl)
+              else (findAll' charTl y);;
+
 
 let findAll prefix trie_list = 
   begin try
@@ -321,6 +333,8 @@ Examples
 let t1 = [Node('h', [Node('e', [Node('y', [Empty])])])];;
 let t2 = [Node('h', [Node('e', [Node('y', [Empty]); Node('l', [Node('l', [Empty])])])])];;
 *)
+
+findAll' ['m';'o';'n'] t;;
 
 let t1 = Node('c',[Empty]);;
 
