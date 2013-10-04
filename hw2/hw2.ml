@@ -4,18 +4,12 @@ Team:
 
   Ahmad Shehaaz Saif: 260329527
   Ataias Pereira Reis: 260590875
-
+  
+"We certify that both partners contributed equally to the work
+submitted here and that it represents solely our own efforts."
 
   HOMEWORK 2 : COMP 302 Fall 2013 
-  
-   NOTE:  
-
-   All code files must be submitted electronically
-   before class on Oct 3.
-
-  The submitted file name must be hw2.ml 
-
-  Your program must type-check using OCaml.
+  We are using one late day.
 
 *)
 
@@ -172,7 +166,7 @@ The maximum in this list is at position 3 (if the first element of the list is a
 (* QUESTION 4 :  Tries                                          *) 
 (* -------------------------------------------------------------*)
 
-(* Dictonary *)
+(* Dictionary *)
 (* Implement a trie to look up strings in  a dictionary *)
 
 (* A trie is an n-ary tree *)
@@ -198,13 +192,25 @@ let rec string_implode l = match l with
 (* QUESTION 4.2 : Insert a string into a trie  [15 points]      *) 
 (* -------------------------------------------------------------*)
 
-
+(*returnCharFirstElement
+takes a trie list of several elements as
+[Node('a', y); Node('b', z); ...]
+and also a char and an empty list to initialize the accumulator.
+It returns a trie list also, but with the char given as the first element,
+if it exists.
+*)
 let rec returnCharFirstElement trieList char acc = match trieList with
       |[] -> acc
       |Empty::tl -> returnCharFirstElement tl char (Empty::acc)
       |Node(x,y)::tl -> if x = char then Node(x,y)::(returnCharFirstElement tl char acc) 
 	                      else returnCharFirstElement tl char (Node(x,y)::acc);;
 
+(*
+checkExists
+Given a char list [Node('a', y); Node('b', z); ...] and a char, check if char exists
+and one of the outer nodes, this is: checks 'a', 'b' and ... but do not check inner nodes as
+y and z.
+*)
 let rec checkExists char list = match list with 
   |[] |Empty::_ -> false
   |Node(x,_)::tl -> if(x = char) then true else checkExists char tl;;
@@ -246,15 +252,10 @@ TEST EXAMPLES:
 
 let t_hello = 
 [Node ('h', [Node('e', [Node ('l', [Node ('l', [Node ('o', [Empty])])])])])];;
-
 let t = insert "help" t_hello;;
-
 let t = insert "hollow" t;;
-
 let t = insert "helicopter" t;;
-
 let t = insert "monkey" t;;
-
 let t = insert "money" t;;
 
 *)
