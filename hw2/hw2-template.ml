@@ -343,7 +343,8 @@ It is called in findAll'
 *)
 let rec separateWords trie_list = match trie_list with 
   |[] -> []
-  |Node (x, y)::nodeTl -> (findAllWords [Node (x, y)]) @ separateWords nodeTl;;
+  |Node (x, y)::nodeTl -> (findAllWords [Node (x, y)]) @ separateWords nodeTl
+  |Empty::nodeTl -> (findAllWords [Empty]) @ separateWords nodeTl;;
 
 (*Same thing as lookup, but sends the resulting trie list to separateWords*)
 let rec findAll' char_list  trie_list = match (char_list,trie_list) with
