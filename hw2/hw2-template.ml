@@ -1,4 +1,12 @@
-(* HOMEWORK 2 : COMP 302 Fall 2013 
+(* 
+
+Team: 
+
+  Ahmad Shehaaz Saif: 260329527
+  Ataias Pereira Reis: 260590875
+
+
+  HOMEWORK 2 : COMP 302 Fall 2013 
   
    NOTE:  
 
@@ -367,30 +375,10 @@ let findAll prefix trie_list =
   end;;
 
 
-
-(*
-Con'sing technique:
-
-let t1 = [Node ('o',
-  [Node ('n',
-    [Node ('e', [Node ('y', [Empty])]);
-     Node ('k', [Node ('e', [Node ('y', [Empty])])])])])];;
-
-let t2 =  [Node ('n',
-      [Node ('e', [Node ('y', [Empty])]);
-       Node ('k', [Node ('e', [Node ('y', [Empty])])])])];;
-
-let t3 =  [Node ('e', [Node ('y', [Empty])]);
-     Node ('k', [Node ('e', [Node ('y', [Empty])])])];;
-*)
-
-
 (* -------------------------------------------------------------*)
 (* TEST CASE                                                    *) 
 (* -------------------------------------------------------------*)
 (*
-
-
 
 let t = 
  [Node
@@ -401,18 +389,4 @@ let t =
 				 Node ('r',[Empty])]) ;
 		    Node ('a' , [Node ('r', [Empty; Node ('d' , [Empty])])])])])]
 
-
-
-
 *)
-
-
-
-
-
-
-
-
-
-
-
