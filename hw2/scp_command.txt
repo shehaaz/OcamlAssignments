@@ -1,0 +1,1 @@
+scp -r hw1 asaif@skinner.cs.mcgill.ca:~/cs302
