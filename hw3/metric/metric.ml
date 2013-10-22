@@ -28,7 +28,7 @@ struct
   let toString x = string_of_float x
   let toFloat x = x
   let fromFloat x = x
-end
+end;;
 
 module Meter = (Float : METRIC);;
 module KM = (Float : METRIC);;
@@ -75,7 +75,7 @@ struct
       | h::t -> let (x,y) = acc in sumL t (x+.h, y +. 1.0)
     in let (sum, n) = sumL slist (0.0, 0.0)
     in sum /. n
-end
+end;;
 
 (* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *)
 (* Question 1.3 *)
@@ -85,8 +85,8 @@ end
    KMPerHour
 *)
 (* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *)
-module MilesPerHour = Speed (Miles)
-module KMPerHour = Speed (KM)
+module MilesPerHour = Speed (Miles);;
+module KMPerHour = Speed (KM);;
 MilesPerHour.speed (Miles.fromFloat 2.0) (Hour.fromFloat 1.0);;
 KMPerHour.speed (KM.fromFloat 2.0) (Hour.fromFloat 1.0);;
 
@@ -118,7 +118,7 @@ sig
   val fahrenheit2celsius : fahrenheit -> celsius
   val miles2KM : miles -> km
   val milesPerHour2KMPerHour : milesPerHour -> kmPerHour
-end
+end;;
 
 module Conversion : CONVERSION with 
   type feet = Feet.t and 
@@ -150,6 +150,6 @@ from a speed value to a float
 The example is just here so that it typechecks
 *)
   let milesPerHour2KMPerHour (mph:milesPerHour) = KMPerHour.speed (KM.fromFloat 2.0) (Hour.fromFloat 1.0);;
-end
+end;;
 (* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *)
 
