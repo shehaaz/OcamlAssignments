@@ -19,6 +19,25 @@ end;;
    We then want use the module Float to create different representations
    for Meter, KM, Feet, Miles, Celsius, and Fahrenheit, Hour 
 *)
+module Float=
+struct
+  type t = float
+  let unit = 1.0
+  let plus x y = x +. y
+  let prod x y = x *. y
+  let toString x = string_of_float x
+  let toFloat x = x
+  let fromFloat x = x
+end
+
+module Meter = (Float : METRIC);;
+module KM = (Float : METRIC);;
+module Feet = (Float : METRIC);;
+module Miles = (Float : METRIC);;
+module Celsius = (Float : METRIC);;
+module Fahrenheit = (Float : METRIC);;
+module Hour = (Float : METRIC);;
+
 (* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *)
 
 
@@ -41,7 +60,22 @@ sig
   val average : s list -> s 
 end;;
 
-
+module Speed (M : METRIC) : SPEED with type distance = M.t=
+struct
+  type s = float
+  type distance = M.t
+  exception EmptyList
+  let speed d t = let spd = (M.toFloat d) /. (Hour.toFloat t) in 
+      let _ = print_string(string_of_float(spd) ^ "\n") (*Print result...*)
+      in spd
+  let average slist = 
+    if slist = [] then raise EmptyList
+    else let rec sumL list acc= match list with
+      | [] -> acc
+      | h::t -> let (x,y) = acc in sumL t (x+.h, y +. 1.0)
+    in let (sum, n) = sumL slist (0.0, 0.0)
+    in sum /. n
+end
 
 (* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *)
 (* Question 1.3 *)
@@ -51,7 +85,10 @@ end;;
    KMPerHour
 *)
 (* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *)
-
+module MilesPerHour = Speed (Miles)
+module KMPerHour = Speed (KM)
+MilesPerHour.speed (Miles.fromFloat 2.0) (Hour.fromFloat 1.0);;
+KMPerHour.speed (KM.fromFloat 2.0) (Hour.fromFloat 1.0);;
 
 (* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *)
 (* Question 1.4 *)
@@ -66,5 +103,53 @@ end;;
 
    Then implement a module which provides these conversion functions.
 *)
+module type CONVERSION = 
+sig
+  type feet
+  type meter
+  type fahrenheit
+  type celsius
+  type miles
+  type km
+  type hour
+  type milesPerHour
+  type kmPerHour
+  val feet2meter : feet -> meter
+  val fahrenheit2celsius : fahrenheit -> celsius
+  val miles2KM : miles -> km
+  val milesPerHour2KMPerHour : milesPerHour -> kmPerHour
+end
+
+module Conversion : CONVERSION with 
+  type feet = Feet.t and 
+  type meter = Meter.t and
+  type fahrenheit = Fahrenheit.t and
+  type celsius = Celsius.t and
+  type miles = Miles.t and
+  type km = KM.t and
+  type hour = Hour.t and
+  type milesPerHour = MilesPerHour.s and
+  type kmPerHour = KMPerHour.s =
+struct
+  type feet = Feet.t
+  type meter = Meter.t
+  type fahrenheit = Fahrenheit.t
+  type celsius = Celsius.t
+  type miles = Miles.t
+  type km = KM.t
+  type hour = Hour.t
+  type milesPerHour = MilesPerHour.s
+  type kmPerHour = KMPerHour.s
+  let feet2meter (ft:feet) = Meter.fromFloat ((Feet.toFloat ft) *. 0.3048)
+  let fahrenheit2celsius (fah:fahrenheit) = Celsius.fromFloat (((Fahrenheit.toFloat fah) -. 32.0) /. 1.8)
+  let miles2KM (mil:miles) = KM.fromFloat ((Miles.toFloat mil) *. 1.60934)
+  (*
+This function is not working the way it should!
+I don't know how to implement it as the signature SPEED doesn't provide a way to convert
+from a speed value to a float
+The example is just here so that it typechecks
+*)
+  let milesPerHour2KMPerHour (mph:milesPerHour) = KMPerHour.speed (KM.fromFloat 2.0) (Hour.fromFloat 1.0);;
+end
 (* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *)
 
