@@ -57,7 +57,8 @@ sig
   type s
   type distance 
   val speed :  distance -> Hour.t -> s 
-  val average : s list -> s 
+  val average : s list -> s (*we can change*)
+  val toFloat : s -> float
 end;;
 
 module Speed (M : METRIC) : SPEED with type distance = M.t=
@@ -75,6 +76,7 @@ struct
       | h::t -> let (x,y) = acc in sumL t (x+.h, y +. 1.0)
     in let (sum, n) = sumL slist (0.0, 0.0)
     in sum /. n
+  let toFloat x = x
 end;;
 
 (* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *)
@@ -143,13 +145,6 @@ struct
   let feet2meter (ft:feet) = Meter.fromFloat ((Feet.toFloat ft) *. 0.3048)
   let fahrenheit2celsius (fah:fahrenheit) = Celsius.fromFloat (((Fahrenheit.toFloat fah) -. 32.0) /. 1.8)
   let miles2KM (mil:miles) = KM.fromFloat ((Miles.toFloat mil) *. 1.60934)
-  (*
-This function is not working the way it should!
-I don't know how to implement it as the signature SPEED doesn't provide a way to convert
-from a speed value to a float
-The example is just here so that it typechecks
-*)
-  let milesPerHour2KMPerHour (mph:milesPerHour) = KMPerHour.speed (KM.fromFloat 2.0) (Hour.fromFloat 1.0);;
+  let milesPerHour2KMPerHour (mph:milesPerHour) = KMPerHour.speed (KM.fromFloat ((MilesPerHour.toFloat mph)*.1.60934)) (Hour.fromFloat 1.0)
 end;;
 (* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *)
-
