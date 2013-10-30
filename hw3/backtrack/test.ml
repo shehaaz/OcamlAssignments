@@ -14,9 +14,9 @@ module L = Lexer;
   let  tl2 = L.lex "((9 ) + 8 ) * ( 2* 4 + 7 );"
 
 
-Parser.parse "9 + 8 * (4 + 7);";;
+Parser.parse "9 + 8 * 4 + 7;";;
 
-Parser.parse "9 + 8;";;
+Parser.parse "(9 + 8) * 9;";;
 (*- : Parser.exp =
 Parser.Sum (Parser.Int 9,
  Parser.Prod (Parser.Int 8, Parser.Sum (Parser.Int 4, Parser.Int 7)))

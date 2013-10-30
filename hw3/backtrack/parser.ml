@@ -97,20 +97,23 @@ Parser.Prod (Parser.Sum (Parser.Int 2, Parser.Int 3), Parser.Int 4)
  |toklist -> try parseProdExp toklist with   
              |ProdExpr(exp,tlist) -> 
 	       match tlist with 
-               |L.PLUS::tl -> raise (SumExpr((Sum (exp,(try parseSumExp tl
-                                                        with SumExpr(r_exp,r_tlist) -> r_exp))),List.tl tl))
+               |L.PLUS::tl -> (try parseSumExp tl
+                              with 
+			      |SumExpr(r_exp,r_tlist) -> 
+			        raise (SumExpr((Sum (exp,r_exp)),r_tlist)))
 	       |_ -> raise (SumExpr(exp,tlist))  
                                    
 				      
              	 
-
  and parseProdExp toklist = match toklist with
  | [] -> raise (Error "Expected Expression: Nothing to parse in parseProdExp")
  |toklist -> try parseAtom toklist with 
              |AtomicExpr(exp,tlist) -> 
 	       match tlist with 
-               |L.TIMES::tl -> raise (ProdExpr((Prod (exp,(try parseProdExp tl
-                                                        with ProdExpr(r_exp,r_tlist) -> r_exp))),List.tl tl))
+               |L.TIMES::tl -> (try parseProdExp tl 
+                                with
+			        |ProdExpr(r_exp,r_tlist) ->
+                                  raise (ProdExpr((Prod (exp,r_exp)),r_tlist)))    
 	       |_ -> raise (ProdExpr (exp,tlist))
              
 	      
@@ -118,6 +121,7 @@ Parser.Prod (Parser.Sum (Parser.Int 2, Parser.Int 3), Parser.Int 4)
  | [] -> raise (Error "Expected Expression: Nothing to parse in parseAtom") 
  | L.INT x::tl -> raise (AtomicExpr((Int x),tl))
  | L.LPAREN::tl -> parseSumExp(tl)
+ | L.RPAREN::tl -> parseSumExp(tl)
  |_ -> raise (Error "Not Int x or LPAREN in parseAtom")
 
 
