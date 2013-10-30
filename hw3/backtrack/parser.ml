@@ -98,7 +98,7 @@ Parser.Prod (Parser.Sum (Parser.Int 2, Parser.Int 3), Parser.Int 4)
              |ProdExpr(exp,tlist) -> 
 	       match tlist with 
                |L.PLUS::tl -> raise (SumExpr((Sum (exp,(try parseSumExp tl
-                                                        with SumExpr(r_exp,r_tlist) -> r_exp))),[L.SEMICOLON]))
+                                                        with SumExpr(r_exp,r_tlist) -> r_exp))),List.tl tl))
 	       |_ -> raise (SumExpr(exp,tlist))  
                                    
 				      
@@ -107,9 +107,11 @@ Parser.Prod (Parser.Sum (Parser.Int 2, Parser.Int 3), Parser.Int 4)
  and parseProdExp toklist = match toklist with
  | [] -> raise (Error "Expected Expression: Nothing to parse in parseProdExp")
  |toklist -> try parseAtom toklist with 
-             |AtomicExpr(exp,tlist) -> match tlist with 
-                                      |L.TIMES::tl -> Prod (exp,parseProdExp (tl))
-				      |_ -> raise (ProdExpr (exp,tlist))
+             |AtomicExpr(exp,tlist) -> 
+	       match tlist with 
+               |L.TIMES::tl -> raise (ProdExpr((Prod (exp,(try parseProdExp tl
+                                                        with ProdExpr(r_exp,r_tlist) -> r_exp))),List.tl tl))
+	       |_ -> raise (ProdExpr (exp,tlist))
              
 	      
  and parseAtom toklist =  match toklist with
