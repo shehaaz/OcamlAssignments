@@ -56,6 +56,20 @@ exception AtomicExpr of exp * L.token list
 (* Example: 
    parse [INT(9),PLUS,INT(8),TIMES,INT(7),SEMICOLON]
    ===> Sum(Int 9, Prod (Int 8, Int 7))
+
+   Example of what the Lexer.lex outputs
+
+# Lexer.lex "(2 + 3) * 4;";;
+- : Lexer.token list =
+[Lexer.LPAREN; Lexer.INT 2; Lexer.PLUS; Lexer.INT 3; Lexer.RPAREN;
+ Lexer.TIMES; Lexer.INT 4; Lexer.SEMICOLON]
+#
+
+# Parser.parse "(2 + 3) * 4;";;
+- : Parser.exp =
+Parser.Prod (Parser.Sum (Parser.Int 2, Parser.Int 3), Parser.Int 4)
+#
+
 *)
 
  exception NotImplemented 
@@ -69,13 +83,31 @@ exception AtomicExpr of exp * L.token list
       | Error msg -> raise (Error msg)
       | _ -> raise (Error "Error: Expected Semicolon")
 
- and parseSumExp toklist = raise NotImplemented
+ and parseSumExp toklist = match toklist with
+ | [] -> raise (Error "Expected Expression: Nothing to parse in parseSumExp")
+ |toklist -> try parseProdExp toklist with 
+             |ProdExpr(exp,tlist) -> if(List.hd tlist = L.PLUS) 
+		                         Sum (exp,parseSumExp (List.tl tlist))
+				     else raise (SumExpr (exp,tlist))	 
+             |Error msg ->  raise (Error msg)		 
 
- and parseProdExp toklist = raise NotImplemented
+ and parseProdExp toklist = match toklist with
+ | [] -> raise (Error "Expected Expression: Nothing to parse in parseProdExp")
+ |toklist -> try parseAtom toklist with 
+             |AtomicExpr(exp,tlist) -> if(List.hd tlist = L.TIMES) 
+		                         Prod (exp,parseProdExp List.tl tlist)
+				       else raise (ProdExpr (exp,tlist))	 
+             |Error msg ->  raise (Error msg)
 	      
- and parseAtom toklist = raise NotImplemented 
+ and parseAtom toklist =  match toklist with
+ | [] -> raise (Error "Expected Expression: Nothing to parse in parseAtom") 
+ | L.INT x::tl -> raise AtomicExpr(Int x,tl)
+ | L.LPAREN::tl -> try parseSumExp(tl) 
+                   with SumExpr(exp,tlist) -> if(List.hd tlist = L.RPAREN) raise AtomicExpr(exp, List.tl tlist)
+ |_ -> raise (Error "Not Int x or LPAREN in parseAtom")
 
- let parse string  = parseExp (L.lex string)
+
+let parse string  = parseExp (L.lex string)
 
 end
 
