@@ -21,6 +21,6 @@ Parser.parse "9 + 8;";;
 Parser.Sum (Parser.Int 9,
  Parser.Prod (Parser.Int 8, Parser.Sum (Parser.Int 4, Parser.Int 7)))
 # 
-*)
+*) 
 
 end
