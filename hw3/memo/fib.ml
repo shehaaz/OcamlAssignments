@@ -11,3 +11,8 @@ struct
     | 1 -> Big_int.big_int_of_int 1 
     | _ -> Big_int.add_big_int (fib(n-2)) (fib(n-1))
 end
+
+(*
+Show the value
+Big_int.string_of_big_int (Fibo.fib(5));;
+*)
