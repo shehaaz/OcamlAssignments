@@ -70,6 +70,15 @@ exception AtomicExpr of exp * L.token list
 Parser.Prod (Parser.Sum (Parser.Int 2, Parser.Int 3), Parser.Int 4)
 #
 
+# Lexer.lex  "9 + 8 * (4 + 7);";;
+- : Lexer.token list =
+[Lexer.INT 9; Lexer.PLUS; Lexer.INT 8; Lexer.TIMES; Lexer.LPAREN;
+ Lexer.INT 4; Lexer.PLUS; Lexer.INT 7; Lexer.RPAREN; Lexer.SEMICOLON]
+
+ # Lexer.lex "9 + 8;";;
+- : Lexer.token list =
+[Lexer.INT 9; Lexer.PLUS; Lexer.INT 8; Lexer.SEMICOLON]
+
 *)
 
  exception NotImplemented 
@@ -85,25 +94,25 @@ Parser.Prod (Parser.Sum (Parser.Int 2, Parser.Int 3), Parser.Int 4)
 
  and parseSumExp toklist = match toklist with
  | [] -> raise (Error "Expected Expression: Nothing to parse in parseSumExp")
- |toklist -> try parseProdExp toklist with 
-             |ProdExpr(exp,tlist) -> if(List.hd tlist = L.PLUS) 
-		                         Sum (exp,parseSumExp (List.tl tlist))
-				     else raise (SumExpr (exp,tlist))	 
-             |Error msg ->  raise (Error msg)		 
+ |toklist -> try parseProdExp toklist with   
+             |ProdExpr(exp,tlist) -> match tlist with 
+                                    |_ -> raise (SumExpr((Sum (exp,Int 8)), [L.SEMICOLON]))
+                                   
+				      
+             	 
 
  and parseProdExp toklist = match toklist with
  | [] -> raise (Error "Expected Expression: Nothing to parse in parseProdExp")
  |toklist -> try parseAtom toklist with 
-             |AtomicExpr(exp,tlist) -> if(List.hd tlist = L.TIMES) 
-		                         Prod (exp,parseProdExp List.tl tlist)
-				       else raise (ProdExpr (exp,tlist))	 
-             |Error msg ->  raise (Error msg)
+             |AtomicExpr(exp,tlist) -> match tlist with 
+                                      |L.TIMES::tl -> Prod (exp,parseProdExp (tl))
+				      |_ -> raise (ProdExpr (exp,tlist))
+             
 	      
  and parseAtom toklist =  match toklist with
  | [] -> raise (Error "Expected Expression: Nothing to parse in parseAtom") 
- | L.INT x::tl -> raise AtomicExpr(Int x,tl)
- | L.LPAREN::tl -> try parseSumExp(tl) 
-                   with SumExpr(exp,tlist) -> if(List.hd tlist = L.RPAREN) raise AtomicExpr(exp, List.tl tlist)
+ | L.INT x::tl -> raise (AtomicExpr((Int x),tl))
+ | L.LPAREN::tl -> parseSumExp(tl)
  |_ -> raise (Error "Not Int x or LPAREN in parseAtom")
 
 

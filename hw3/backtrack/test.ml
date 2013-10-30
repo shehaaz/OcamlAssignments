@@ -15,6 +15,8 @@ module L = Lexer;
 
 
 Parser.parse "9 + 8 * (4 + 7);";;
+
+Parser.parse "9 + 8;";;
 (*- : Parser.exp =
 Parser.Sum (Parser.Int 9,
  Parser.Prod (Parser.Int 8, Parser.Sum (Parser.Int 4, Parser.Int 7)))
