@@ -82,18 +82,19 @@ Parser.Prod (Parser.Sum (Parser.Int 2, Parser.Int 3), Parser.Int 4)
 *)
 
  exception NotImplemented 
-
- let rec parseExp toklist = match toklist with
+let rec parseExp toklist = match toklist with
    | [] -> raise (Error "Expected Expression: Nothing to parse")
    | tlist ->  
     try parseSumExp tlist with 
       | NotImplemented -> raise NotImplemented
+      | SumExpr (exp, L.RPAREN::tl) -> raise (AtomicExpr(exp,tl))
       | SumExpr (exp, [L.SEMICOLON]) -> exp
       | Error msg -> raise (Error msg)
       | _ -> raise (Error "Error: Expected Semicolon")
 
  and parseSumExp toklist = match toklist with
  | [] -> raise (Error "Expected Expression: Nothing to parse in parseSumExp")
+
  |toklist -> try parseProdExp toklist with   
              |ProdExpr(exp,tlist) -> 
 	       match tlist with 
@@ -101,9 +102,7 @@ Parser.Prod (Parser.Sum (Parser.Int 2, Parser.Int 3), Parser.Int 4)
                               with 
 			      |SumExpr(r_exp,r_tlist) -> 
 			        raise (SumExpr((Sum (exp,r_exp)),r_tlist)))
-	       |_ -> raise (SumExpr(exp,tlist))  
-                                   
-				      
+	       |_ -> raise (SumExpr(exp,tlist))  	      
              	 
  and parseProdExp toklist = match toklist with
  | [] -> raise (Error "Expected Expression: Nothing to parse in parseProdExp")
@@ -120,10 +119,8 @@ Parser.Prod (Parser.Sum (Parser.Int 2, Parser.Int 3), Parser.Int 4)
  and parseAtom toklist =  match toklist with
  | [] -> raise (Error "Expected Expression: Nothing to parse in parseAtom") 
  | L.INT x::tl -> raise (AtomicExpr((Int x),tl))
- | L.LPAREN::tl -> parseSumExp(tl)
- | L.RPAREN::tl -> parseSumExp(tl)
+ | L.LPAREN::tl -> parseExp tl
  |_ -> raise (Error "Not Int x or LPAREN in parseAtom")
-
 
 let parse string  = parseExp (L.lex string)
 
