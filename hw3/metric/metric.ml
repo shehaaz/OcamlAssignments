@@ -148,4 +148,10 @@ struct
   let miles2KM (mil:miles) = KM.fromFloat ((Miles.toFloat mil) *. 1.60934)
   let milesPerHour2KMPerHour (mph:milesPerHour) = KMPerHour.speed (KM.fromFloat ((MilesPerHour.toFloat mph)*.1.60934)) (Hour.fromFloat 1.0)
 end;;
+
+(*Examples*)
+Meter.toFloat (Conversion.feet2meter (Feet.fromFloat 2.0));;
+Celsius.toFloat (Conversion.fahrenheit2celsius (Fahrenheit.fromFloat 30.0));;
+KM.toFloat (Conversion.miles2KM (Miles.fromFloat 3.0));;
+KMPerHour.toFloat (Conversion.milesPerHour2KMPerHour (MilesPerHour.speed (Miles.fromFloat 2.0) (Hour.fromFloat 1.0)));;
 (* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *)
