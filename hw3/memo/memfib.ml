@@ -63,3 +63,15 @@ end
 
 module AMF = (AutoMemoedFibo : FIBO)
 
+(*
+  
+Test cases:
+
+# Big_int.string_of_big_int (AMF.fib 10);;
+- : string = "55"
+
+# Big_int.string_of_big_int (MF.fib 59);;
+# Big_int.string_of_big_int (MF.fib 100);;
+
+*)
+
