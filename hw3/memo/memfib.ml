@@ -28,11 +28,7 @@ end
 
 module Memoize (D: DICT) : (MEMOIZER with type key = D.Key.t) =
 struct
-(*
-It is quite strange this all...
-Could I consider that are base cases of the function f which will be arguments? 
-So in the beginning we memoize them.
-*)
+
   type key = D.Key.t
 
   exception NotImplemented 
