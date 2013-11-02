@@ -57,17 +57,17 @@ sig
   type s
   type distance 
   val speed :  distance -> Hour.t -> s 
-  val average : s list -> s (*we can change*)
+  val average : s list -> s 
   val toFloat : s -> float
 end;;
 
+(* Functor *)
 module Speed (M : METRIC) : SPEED with type distance = M.t=
 struct
   type s = float
   type distance = M.t
   exception EmptyList
-  let speed d t = let spd = (M.toFloat d) /. (Hour.toFloat t) in 
-      let _ = print_string(string_of_float(spd) ^ "\n") (*Print result...*)
+  let speed d t = let spd = (M.toFloat d) /. (Hour.toFloat t) 
       in spd
   let average slist = 
     if slist = [] then raise EmptyList
@@ -87,6 +87,7 @@ end;;
    KMPerHour
 *)
 (* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *)
+(* Example to createa MilesPerHour and KMPerHour *)
 module MilesPerHour = Speed (Miles);;
 module KMPerHour = Speed (KM);;
 MilesPerHour.speed (Miles.fromFloat 2.0) (Hour.fromFloat 1.0);;
@@ -101,7 +102,7 @@ KMPerHour.speed (KM.fromFloat 2.0) (Hour.fromFloat 1.0);;
    - feet2meter          meter = feet * 0.3048
    - fahrenheit2celsius  celsius = (fahrenheit - 32) / 1.8
    - miles2KM            km = miles * 1.60934
-   - MilesPerHour2KMPerHour 
+   - milesPerHour2KMPerHour 
 
    Then implement a module which provides these conversion functions.
 *)
