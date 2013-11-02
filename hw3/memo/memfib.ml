@@ -57,12 +57,3 @@ end
 
 module AMF = (AutoMemoedFibo : FIBO)
 
-(*Part 4 - Question 3 
-Answer :
-Memoizer is just helpful for functions that return a value.
-In the case of functions that have side effects and return a value, only the
-value will be saved, it will not keep track of the side effects. If they influence in the
-result of the function, then memoize will be of no great help.
-If the function has no return, just side effects, it will not work actually. All keys will be added
-with the value of unit, and this will not help.
-*)

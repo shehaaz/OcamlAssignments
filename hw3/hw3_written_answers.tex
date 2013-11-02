@@ -71,13 +71,14 @@
 \begin{tabular}{lll}
 Assignment 3 & \\
 Name: Ataias Pereira Reis & ID: 260590875\\
-Name: Ahmad Saif & ID: \\
+Name: Ahmad Saif & ID: 260329527\\
 \end{tabular}
 %\maketitle
 
 \section*{Question 3}
 \paragraph{Poormemoizer} The Fibonacci function was defined as a recursive function, so this means it call itself. Our written function to memoize Fibonnaci called the memoized function everytime a recursive call was made, and if the value was memoized, than it was retrieved, otherwise, computed the missing values up to the number of the sequence we want to obtain, and saving the results. In the case of poormemoizer, the recursive calls are made to the original function, not the memoized function. fib(60), for example, needs fib(59) and fib(58). If the function created in question 1 was run with fib(59), then fib(60) would be easily computed as fib(59) + fib(58), and then saved in memory. In the poormemoized function, even if it was run with fib(59) before fib(60) (or a greater number in the sequence), it ignores it and computes from scratch everytime, as fib(59) + fib(58) + fib(57) + $\ldots$ + fib(0). This makes things much slower.
-\paragraph{Memoizer and side-effect function} Memoizer is great for function that are in a model similar to the Fibonnaci, recursive or non-recursive functions, that return a specific value for an input. In the case of function that have side-effects, as printing something, and printing is the only side-effect, than the memoizer would just be memoizing unit() as what the function does, and this wouldn't be helpful for any effects. In the case of returning a value, and ignoring the side-effects, if the side-effects never influence the value of the output, than it is interesting to use this memoizer, as the computations will be done and only the side-effects will be repeated all the times. In the case of the side-effects influencing the output, than this would be a mess. The output would consider the state of mutable variables in the first call, and then just give the same output again, even though the result should be different. An example of this follow below:
+\paragraph{Memoizer and side-effect function} Memoizer is great for functions that are in a model similar to the Fibonnaci, recursive or non-recursive functions, that return a specific value for an input. In the case of functions that have side-effects, as printing something, and printing is the only side-effect, then the memoizer would just be memoizing unit() as what the function does, and this wouldn't be helpful for anything.
+\paragraph{} In the case of returning a value, ignoring side-effects, if they do not influence the value of the output, then it is useful to use this memoizer, as the core computations will be memoized. In the case of the side-effects influencing the output, then this would be a mess. The output would consider the state of mutable variables in the first call, and then just give the same output again, even though the result should be different. An example of this follow below:
 \begin{verbatim}
 let x = ref 0
 let rec f n = 
