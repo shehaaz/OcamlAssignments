@@ -1,6 +1,6 @@
-#load "nums.cma"
-#use "ordered.ml"
-#use "dict.ml"
-#use "fib.ml"
-#use "memo.ml"
-#use "memfib.ml"
+#load "nums.cma";;
+#use "ordered.ml";;
+#use "dict.ml";;
+#use "fib.ml";;
+#use "memo.ml";;
+#use "memfib.ml";;
