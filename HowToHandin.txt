@@ -1,0 +1,5 @@
+1- navigate to assignment folder
+2- scp -r hw3 asaif@skinner.cs.mcgill.ca:/home/2010/asaif/cs302/hw3
+3- ssh asaif@skinner.cs.mcgill.ca
+4- handin cs302 hw3
+5- handin -c  cs302 hw3
