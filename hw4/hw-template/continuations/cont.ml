@@ -36,8 +36,37 @@ foldr : ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b
 foldr f [a1; ...; an] b is f a1 (f a2 (... (f an b) ...)). 
 *)
 
-  let rec aux_foldr f l b cont = raise TODO 
+  let rec aux_foldr f l b cont = match l with 
+    |[] -> cont b
+    |hd::tl -> aux_foldr f tl b (fun r -> cont(f hd r))
 
   let foldr f l b = aux_foldr f l b (fun r -> r)
 
 end;;
+
+
+
+(*
+
+TEST CASE:
+
+# foldr (fun x y -> x+y) [1;2;3;4;5] 5;;
+- : int = 20
+
+# foldr (fun x y -> x+y) [1;2;3;4;5] 0;;
+- : int = 15
+
+How to call list.fold_right:
+
+# List.fold_right (fun x y -> x+y) [1;2;3;4;5] 5;;
+- : int = 20
+
+Normal_fold_right:
+
+
+let rec normal_fold_right f l b = match l with
+  |[] -> b
+  |hd::tl -> f hd (normal_fold_right f tl b);;
+
+
+*)
