@@ -12,7 +12,17 @@ let rec change coins amt sc fc = raise TODO
    the exception handler *)
 
 exception NoChange
-let rec change' coins amt sc  = raise TODO
+
+(* SUCCESS Continuation *)
+let rec change' coins amt sc  = 
+if amt = 0 then sc []
+else
+    match coins with
+	| [] -> sc []
+	| hd::tl -> 
+		if (hd > amt) then  change' tl amt sc
+		else 
+		    change' (hd::tl) (amt-hd) (fun r -> sc(hd::r));;
 
 let listToString l = match l with 
   | [] -> ""
@@ -32,3 +42,23 @@ let give_change coins amt =
 
 
 end;;
+
+(* 
+
+Change using Continuations: ONLY SUCCESS CONTINUATION
+
+let rec aux_change_cont coins amt cont = 
+if amt = 0 then cont []
+else
+	match coins with
+	| [] -> cont []
+	| hd::tl -> 
+		if (hd > amt) then aux_change_cont tl amt cont
+		else 
+		  aux_change_cont (hd::tl) (amt-hd) (fun r -> cont(hd::r));;
+			
+
+let rec change_cont coins amt =  aux_change_cont coins amt (fun r -> r);;
+
+
+*)
