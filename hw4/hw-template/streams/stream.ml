@@ -61,8 +61,39 @@ struct
     }
 
       
-  let rec merge s1 s2 = raise TODO
+  let rec merge s1 s2 = 
+    let smallerHead = if s1.hd > s2.hd then s2.hd else s1.hd in
+    let p r = smallerHead < r in
+    { hd = smallerHead;
+      tl = Susp (fun () -> merge (filter p s1) (filter p s2))
+    } 
 
 
   end ;;
 
+(*
+
+TEST CASE: 
+
+open Stream;;
+
+let rec numsFrom n k=
+{ hd = n; tl = Susp (fun () -> numsFrom (n+k) k)};;
+
+let stream1 = numsFrom 0 1;;
+let stream2 = numsFrom 5 5;;
+
+take 10 (merge stream1 stream2);;
+
+*)
+
+
+open Stream;;
+
+let rec numsFrom n k=
+{ hd = n; tl = Susp (fun () -> numsFrom (n+k) k)};;
+
+let stream1 = numsFrom 0 2;;
+let stream2 = numsFrom 5 3;;
+
+take 10 (merge stream1 stream2);;
