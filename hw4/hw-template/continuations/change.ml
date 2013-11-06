@@ -3,7 +3,17 @@ struct
 
 exception TODO
 
-let rec change coins amt sc fc = raise TODO
+let rec change coins amt sc fc = 
+if amt = 0 then sc []
+else
+    match coins with
+	| [] -> fc()
+	| hd::tl -> 
+		if (hd > amt) then  change tl amt sc fc
+		else 
+                    try
+		    change (hd::tl) (amt-hd) (fun r -> sc(hd::r)) fc
+                    with _ -> change (tl) (amt) sc fc;;  (* I used wild_card to catch the unknown exn *)
 
 (* if you write the function change directly, you do not
    need to implement change'. It is only if you want to
@@ -14,15 +24,8 @@ let rec change coins amt sc fc = raise TODO
 exception NoChange
 
 (* SUCCESS Continuation *)
-let rec change' coins amt sc  = 
-if amt = 0 then sc []
-else
-    match coins with
-	| [] -> sc []
-	| hd::tl -> 
-		if (hd > amt) then  change' tl amt sc
-		else 
-		    change' (hd::tl) (amt-hd) (fun r -> sc(hd::r));;
+let rec change' coins amt sc = raise TODO 
+
 
 let listToString l = match l with 
   | [] -> ""
@@ -43,13 +46,32 @@ let give_change coins amt =
 
 end;;
 
+
+
+
+
 (* 
+
+
+TEST CASE:
+
+   # give_change [2;3] 17;;
+   Return coins: 2, 2, 2, 2, 2, 2, 2, 3
+   - : unit = ()
+   # give_change [2;3] 18;;
+   Return coins: 2, 2, 2, 2, 2, 2, 2, 2, 2
+   - : unit = ()
+   # give_change [2;3] 1;;
+   Sorry, I cannot give change
+   - : unit = ()
+
+
 
 Change using Continuations: ONLY SUCCESS CONTINUATION
 
-let rec aux_change_cont coins amt cont = 
-if amt = 0 then cont []
-else
+   let rec aux_change_cont coins amt cont = 
+   if amt = 0 then cont []
+   else
 	match coins with
 	| [] -> cont []
 	| hd::tl -> 
@@ -59,6 +81,26 @@ else
 			
 
 let rec change_cont coins amt =  aux_change_cont coins amt (fun r -> r);;
+
+
+
+
+Change using EXCEPTIONS:
+
+   exception ChangeException;;
+
+   let rec change_exp coins amt = 
+   if amt = 0 then []
+   else
+	match coins with
+	| [] -> raise ChangeException
+	| hd::tl -> 
+		if hd > amt then change_exp tl amt
+		else 
+			try
+			  hd :: change_exp (hd::tl) (amt-hd)
+			with ChangeException ->
+			  change_exp (tl) (amt);;
 
 
 *)
