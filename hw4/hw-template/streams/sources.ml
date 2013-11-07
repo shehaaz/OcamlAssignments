@@ -1,12 +1,10 @@
 #use "stream.ml";;
 #use "series.ml";;
 #use "pascal.ml";;
-open Stream;;
-open Series;;
-open Pascal;;
-(*
+open Stream
+open Series
+
 take 20 hamming_series;;
-*)
 (*
 1 2 3 4 5 6 8 9 10 12 15 16 18 20 24 25 27 30 32 36 40 45 
 48 50 54 60 64 72 75 80 81 90 96 100 108 120 125 128 135 
