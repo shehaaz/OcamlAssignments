@@ -1,12 +1,16 @@
 module Pascal = 
 struct
   open Stream
-    
+  exception TODO;;
     
 (* ------------------------------------------------------- *)
 (* Computing partial sums lazily over a stream of nats     *)
 
-let rec psums s = raise TODO
+let rec psums s =
+  let rec psums' s cont = {
+    hd = cont (s.hd);
+    tl = Susp (fun () -> psums' (force s.tl) (fun r -> cont (s.hd + r)))} in
+  psums' s (fun r -> r)
 
 
 (*----------------------------------------------------------------------------*)
