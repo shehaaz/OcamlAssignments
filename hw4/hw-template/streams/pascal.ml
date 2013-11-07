@@ -1,8 +1,7 @@
 module Pascal = 
 struct
-  open Stream
-  exception TODO;;
-    
+    open Stream;;
+    open Series;;
 (* ------------------------------------------------------- *)
 (* Computing partial sums lazily over a stream of nats     *)
 
@@ -10,7 +9,7 @@ let rec psums s =
   let rec psums' s cont = {
     hd = cont (s.hd);
     tl = Susp (fun () -> psums' (force s.tl) (fun r -> cont (s.hd + r)))} in
-  psums' s (fun r -> r)
+  psums' s (fun r -> r);;
 
 
 (*----------------------------------------------------------------------------*)
@@ -33,7 +32,8 @@ the second element to the second diagonal, etc.
 *)
 let rec pascal  = {
   hd = ones;
-  tl = Susp (fun () -> map psums pascal)}
+  tl = Susp (fun () -> (map psums pascal))
+};;
 (*
 Testing:
 take 5 ((force (pascal.tl)).hd);;
@@ -44,7 +44,7 @@ take 5 ((force ((force (pascal.tl)).tl)).hd);;
 let rec getNth n s = if n = 1 then s.hd else getNth (n-1) (force s.tl);;
 (*getNth 2 (((force ((force (pascal.tl)).tl)).hd));;*)
 
-let rec row k (s: (int str) str) = if k = 1 then s.hd else row (k-1) (force s.tl)
+let rec row k (s: (int str) str) = if k = 1 then s.hd else row (k-1) (force s.tl);;
 
 let rec getRow (s : (int str) str) nr acc =
   if nr = 0 then acc
@@ -60,7 +60,7 @@ let rec triangle (s : (int str) str) =
 (*----------------------------------------------------------------------------*)
 (* To illustrate the result ... *) 
 let rec map_tolist n f s = if n = 0 then  []
-  else (f s.hd) :: map_tolist (n-1) f (force s.tl)
+  else (f s.hd) :: map_tolist (n-1) f (force s.tl);;
 (*
 # map_tolist 5 (fun r->r) (triangle pascal);;
 - : int list list = [[1]; [1; 1]; [1; 2; 1]; [1; 3; 3; 1]; [1; 4; 6; 4; 1]]
