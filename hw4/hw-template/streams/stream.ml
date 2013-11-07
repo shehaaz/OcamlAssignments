@@ -71,29 +71,11 @@ struct
 
   end ;;
 
-(*
-
-TEST CASE: 
-
-open Stream;;
-
 let rec numsFrom n k=
-{ hd = n; tl = Susp (fun () -> numsFrom (n+k) k)};;
+{ hd = n; tl = Susp (fun () -> numsFrom (n+k) k)}
 
 let stream1 = numsFrom 0 1;;
-let stream2 = numsFrom 5 5;;
-
-take 10 (merge stream1 stream2);;
-
-*)
-
-
-open Stream;;
-
-let rec numsFrom n k=
-{ hd = n; tl = Susp (fun () -> numsFrom (n+k) k)};;
-
-let stream1 = numsFrom 0 2;;
-let stream2 = numsFrom 5 3;;
-
+let stream2 = numsFrom 1 2;;
+take 5 stream1;;
+take 5 stream2;;
 take 10 (merge stream1 stream2);;

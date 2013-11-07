@@ -1,13 +1,4 @@
-module type SERIES = 
-sig
-  val ones            : int Stream.str  
-  val numsFrom        : int -> int Stream.str
-  val fibonacci_series: int Stream.str
-  val hamming_series  : int Stream.str 
-end ;;
-
-
-module Series : SERIES = 
+module Series= 
 struct
 
   open Stream 
@@ -48,7 +39,7 @@ ROUGHLY
 let rec fibs = 
 {hd = 0 ; 
   tl = Susp (fun () -> fibs') }
-and fibs' = 
+ and fibs' = 
 {hd = 1 ;
  tl = Susp (fun () -> add fibs fibs')
 }
@@ -56,6 +47,13 @@ and fibs' =
 let fibonacci_series = fibs 
 
 (* Hamming series *) 
-let rec hamming_series =  raise TODO
+let rec sequenceOfPowers n k= {
+  hd = 1; 
+  tl = Susp (fun () -> {hd = n; tl = Susp (fun () -> force (sequenceOfPowers (n*k) k).tl)})}
 
+let rec multiplySequences seq1 seq2 = {
+  hd = seq1.hd*seq2.hd;
+  tl = Susp (fun () -> merge (multiplySequences seq1 (force (seq2.tl))) (multiplySequences (force (seq1.tl)) seq2))}
+let rec hamming_series = 
+  multiplySequences (sequenceOfPowers 5 5) (multiplySequences (sequenceOfPowers 2 2) (sequenceOfPowers 3 3))
 end;;
