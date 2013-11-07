@@ -31,8 +31,15 @@ The first element corresponds to the first diagonal in Pascal's triangle;
 the second element to the second diagonal, etc.
  
 *)
-let rec pascal  = raise TODO
-
+let rec pascal  = {
+  hd = ones;
+  tl = Susp (fun () -> map psums pascal)}
+(*
+Testing:
+take 5 ((force (pascal.tl)).hd);;
+take 5 ((force (force (pascal.tl))).hd);;
+take 5 ((force ((force (pascal.tl)).tl)).hd);;
+*)
 
 let rec getNth n s = raise TODO
 
