@@ -45,8 +45,16 @@ let rec getNth n s = if n = 1 then s.hd else getNth (n-1) (force s.tl);;
 (*getNth 2 (((force ((force (pascal.tl)).tl)).hd));;*)
 
 let rec row k (s: (int str) str) = if k = 1 then s.hd else row (k-1) (force s.tl)
- 
-let rec triangle (s : (int str) str) = raise TODO
+
+let rec getRow (s : (int str) str) nr acc =
+  if nr = 0 then acc
+  else getRow (force s.tl) (nr-1) ((getNth nr (row 1 s))::acc);;
+
+let rec triangle (s : (int str) str) = 
+  let rec triangle' (s : (int str) str) n = {
+    hd = getRow s n [];
+    tl = Susp (fun () -> (triangle' s (n+1)))}
+  in triangle' s 1;;
 
 
 (*----------------------------------------------------------------------------*)
