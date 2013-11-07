@@ -41,9 +41,10 @@ take 5 ((force (force (pascal.tl))).hd);;
 take 5 ((force ((force (pascal.tl)).tl)).hd);;
 *)
 
-let rec getNth n s = raise TODO
+let rec getNth n s = if n = 1 then s.hd else getNth (n-1) (force s.tl);;
+(*getNth 2 (((force ((force (pascal.tl)).tl)).hd));;*)
 
-let rec row k (s: (int str) str) = raise TODO
+let rec row k (s: (int str) str) = if k = 1 then s.hd else row (k-1) (force s.tl)
  
 let rec triangle (s : (int str) str) = raise TODO
 
