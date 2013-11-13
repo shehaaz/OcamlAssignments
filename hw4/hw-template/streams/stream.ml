@@ -75,14 +75,18 @@ struct
       tl = Susp (fun () -> merge (filter p s1) (filter p s2))
     } 
 
+  let rec numsFrom n k=
+  { hd = n; tl = Susp (fun () -> numsFrom (n+k) k)}
 
-  end ;;
-
-let rec numsFrom n k=
-{ hd = n; tl = Susp (fun () -> numsFrom (n+k) k)}
-
+(*
 let stream1 = numsFrom 0 1;;
 let stream2 = numsFrom 1 2;;
 take 5 stream1;;
 take 5 stream2;;
 take 10 (merge stream1 stream2);;
+*)
+  end ;;
+
+
+
+

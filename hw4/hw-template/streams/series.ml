@@ -61,6 +61,7 @@ let rec sequenceOfPowers n k= {
 let rec multiplySequences seq1 seq2 = {
   hd = seq1.hd*seq2.hd;
   tl = Susp (fun () -> merge (multiplySequences seq1 (force (seq2.tl))) (multiplySequences (force (seq1.tl)) seq2))}
+(* Stream.take 20 (Series.hamming_series);;*)
 let rec hamming_series = 
   multiplySequences (sequenceOfPowers 5 5) (multiplySequences (sequenceOfPowers 2 2) (sequenceOfPowers 3 3))
 end;;

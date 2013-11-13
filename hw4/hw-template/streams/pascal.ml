@@ -69,10 +69,8 @@ let rec triangle (s : (int str) str) =
 let rec map_tolist n f s = if n = 0 then  []
   else (f s.hd) :: map_tolist (n-1) f (force s.tl);;
 (*
-# map_tolist 5 (fun r->r) (triangle pascal);;
-- : int list list = [[1]; [1; 1]; [1; 2; 1]; [1; 3; 3; 1]; [1; 4; 6; 4; 1]]
-# take 5 (triangle pascal);;
-- : int list list = [[1]; [1; 1]; [1; 2; 1]; [1; 3; 3; 1]; [1; 4; 6; 4; 1]]
+Example:
+Stream.take 5 (Pascal.triangle Pascal.pascal);;
 *)
 (*----------------------------------------------------------------------------*)
 
