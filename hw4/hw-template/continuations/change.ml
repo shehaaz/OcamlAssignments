@@ -1,3 +1,10 @@
+(*
+Name: Ataias Pereira Reis & ID: 260590875
+Name: Ahmad Saif & ID: 260329527
+
+"We certify that both partners contributed equally to the work
+submitted here and that it represents solely our own efforts"*)
+
 module Change = 
 struct
 
@@ -55,12 +62,8 @@ end;;
 
 TEST CASE:
 
-   # give_change [2;3] 17;;
-   Return coins: 2, 2, 2, 2, 2, 2, 2, 3
-   - : unit = ()
-   # give_change [2;3] 18;;
-   Return coins: 2, 2, 2, 2, 2, 2, 2, 2, 2
-   - : unit = ()
+   # Change.give_change [3;2] 17;;
+   Return coins: 3, 3, 3, 3, 3, 2
    # give_change [2;3] 1;;
    Sorry, I cannot give change
    - : unit = ()
