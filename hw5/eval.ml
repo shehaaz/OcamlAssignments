@@ -48,7 +48,8 @@ let rec varsDecs d = match d with
   | [] -> ([],[])
   | dec1::decs ->
     let (free, bound) = varsDecs decs in
-    (union(freeVarsDec dec1, delete(boundVars dec1, free)), bound)
+    let bv = boundVars dec1 in
+    (union(freeVarsDec dec1, delete(boundVars dec1, free)), union (bv, bound))
 
 and freeVarsDec d = match d with
   | Val (exp, name) -> freeVars exp
