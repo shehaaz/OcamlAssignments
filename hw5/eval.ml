@@ -82,12 +82,32 @@ and freeVars e = match e with
       freeVars e
 
 let freeVariables e = freeVars e
-
 (* ---------------------------------------------------------- *)
 (* Question 1 *)
 
-let unusedVariables e = raise Unimplemented
-
+let unusedVariables e = 
+  let rec boundVariables t = match t with
+  | Var y -> [y]
+  | Int n -> []
+  | Bool b -> []
+  | If(e, e1, e2) ->
+    union (boundVariables e, union (boundVariables e1, boundVariables e2))
+  | Let (decs, e2) ->
+    let (free, bound) = varsDecs decs in
+    free @ bound @ (boundVariables e2)
+  | Primop(po, args) -> List.fold_right (fun e1 e2 -> (boundVariables e1) @ e2) args []
+  | Tuple exps -> unionList (List.map boundVariables exps)
+  | Fn (x, _, e) -> x::(boundVariables e)
+  | Rec (x, _, e) -> x::(boundVariables e)
+  | Apply (e1, e2) ->
+      union(boundVariables e1, boundVariables e2)
+  | Anno (e, _) ->
+      boundVariables e
+  in boundVariables e
+(*The plan is to take the list that is being returned by boundVariables, remove the elements of it that match freeVariables and 
+then remove the pairs, if it is not a pair, not remove
+Also remember to take the unions in the functions boundVariables, they are bad!
+*)
 (* ---------------------------------------------------------- *)
 (* Substitution (corrected description)
    subst : (exp * name) -> exp -> exp
