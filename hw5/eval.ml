@@ -82,32 +82,35 @@ and freeVars e = match e with
       freeVars e
 
 let freeVariables e = freeVars e
+
 (* ---------------------------------------------------------- *)
 (* Question 1 *)
 
-let unusedVariables e = 
-  let rec boundVariables t = match t with
+let rec unusedVariables e = 
+  let rec allVariables t = match t with
   | Var y -> [y]
   | Int n -> []
   | Bool b -> []
   | If(e, e1, e2) ->
-    union (boundVariables e, union (boundVariables e1, boundVariables e2))
+    (allVariables e) @ (allVariables e1) @ (allVariables e2)
   | Let (decs, e2) ->
     let (free, bound) = varsDecs decs in
-    free @ bound @ (boundVariables e2)
-  | Primop(po, args) -> List.fold_right (fun e1 e2 -> (boundVariables e1) @ e2) args []
-  | Tuple exps -> unionList (List.map boundVariables exps)
-  | Fn (x, _, e) -> x::(boundVariables e)
-  | Rec (x, _, e) -> x::(boundVariables e)
+    free @ bound @ (allVariables e2)
+  | Primop(po, args) -> List.fold_right (fun e1 e2 -> (allVariables e1) @ e2) args []
+  | Tuple exps -> unionList (List.map allVariables exps)
+  | Fn (x, _, e) -> x::(allVariables e)
+  | Rec (x, _, e) -> x::(allVariables e)
   | Apply (e1, e2) ->
-      union(boundVariables e1, boundVariables e2)
+      (allVariables e1) @ ( allVariables e2)
   | Anno (e, _) ->
-      boundVariables e
-  in boundVariables e
-(*The plan is to take the list that is being returned by boundVariables, remove the elements of it that match freeVariables and 
-then remove the pairs, if it is not a pair, not remove
-Also remember to take the unions in the functions boundVariables, they are bad!
-*)
+      allVariables e in
+   let vars = allVariables e in takeUnusedVars vars
+and takeUnusedVars list = match list with
+  | [] -> []
+  | hd::tl -> let (p1, p2) = List.partition (fun x -> x = hd) tl in
+	      if ((List.length p1) + 1) mod 2==0 then takeUnusedVars p2 else hd::(takeUnusedVars p2)
+  
+
 (* ---------------------------------------------------------- *)
 (* Substitution (corrected description)
    subst : (exp * name) -> exp -> exp

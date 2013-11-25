@@ -1,5 +1,4 @@
 exception Stuck of string
-  val varsDecs : Minml.dec list -> Minml.name list * Minml.name list
   val freeVariables : Minml.exp -> string list
 
   val unusedVariables : Minml.exp -> string list
