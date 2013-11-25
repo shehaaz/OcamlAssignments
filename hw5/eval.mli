@@ -1,5 +1,9 @@
 exception Stuck of string
 
+  (*Those between comments are just to test those functions, after you can erase them from here*)
+  val union : 'a list * 'a list -> 'a list
+  val unionList : 'a list list -> 'a list
+  (* ----------------------------------------------------------------------------------------- *)
   val freeVariables : Minml.exp -> string list
 
   val unusedVariables : Minml.exp -> string list

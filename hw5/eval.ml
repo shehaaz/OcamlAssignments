@@ -276,14 +276,14 @@ and eval exp =
   let result = match exp with
 
   (* Values evaluate to themselves... *)
-
-  | Fn (x, t, e) -> raise Unimplemented
+  (*Example of how to use subst: Eval.subst (Top.parse "2;", "x") (Top.parse "x+x;");;*)
+  | Fn (x, t, e) -> Fn(x, t, e) (*not sure of this!*)
   | Int _ -> exp
   | Bool _ -> exp
 
   | Var x -> raise (Stuck ("Free variable (" ^ x ^ ") during evaluation"))
 
-  | Rec (f, _, e) -> raise Unimplemented
+  | Rec (f, t, e) -> (*raise Unimplemented*) eval (step (Rec(f, t, e))) (*by the way, I don't know what step does... I just guessed*)
 
   (* primitive operations +, -, *, <, = *)
   | Primop(po, args) ->
@@ -294,7 +294,7 @@ and eval exp =
 
   | Tuple es -> Tuple (evalList es)
 
-  | Let(d, e2) -> raise Unimplemented
+  | Let(d, e2) -> (*raise Unimplemented*) eval (step (Let(d, e2)))
 
   | Anno (e, _) -> eval e     (* types are ignored in evaluation *)
 
@@ -304,7 +304,7 @@ and eval exp =
        | Bool false -> eval e2
        | _ -> raise (Stuck "Left term of application is not an Fn"))
 
-  | Apply (e1, e2) -> raise Unimplemented  
+  | Apply (e1, e2) -> let Fn(x, t, e) = eval e1 in let v2 = eval e2 in eval (subst (v2, x) e) (*have written but not tested...*)
 
   in
     bigstep_depth := !bigstep_depth - 1;
@@ -317,7 +317,7 @@ and eval exp =
 
 
 
-let rec isValue v = match v with
+and isValue v = match v with
   | Int _ -> true
   | Bool _ -> true
   | If _ -> false
@@ -334,7 +334,7 @@ let rec isValue v = match v with
   *
   * Implements small-step evaluation e1 => e2
   *)
-  let rec step exp =
+and step exp =
     let stuckOnValue = Stuck "Already a value" in
     let rec stepFirst e = match e with
       | [] -> []
@@ -417,7 +417,7 @@ let rec isValue v = match v with
   *
   * Calls `step' repeatedly until it gets a value
   *)
- let rec smallstep exp =
+and smallstep exp =
   (if !verbose >= 1 then print_endline ("smallstep " ^ Print.expToString exp ^ "\n") else ();
    if isValue exp then exp
    else
