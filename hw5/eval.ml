@@ -276,14 +276,36 @@ and eval exp =
   let result = match exp with
 
   (* Values evaluate to themselves... *)
-  (*Example of how to use subst: Eval.subst (Top.parse "2;", "x") (Top.parse "x+x;");;*)
-  | Fn (x, t, e) -> Fn(x, t, e) (*not sure of this!*)
+  (*
+
+    Example of how to use:
+    
+    # Top.parse "let val x = 5 in x * 3 end;";;
+    - : Minml.exp =
+    Minml.Let
+    ([Minml.Val (Minml.Int 5, "x")],
+    Minml.Primop (Minml.Times, [Minml.Var "x"; Minml.Int 3]))
+    # Eval.eval(Top.parse "let val x = 5 in x * 3 end;");; 
+    - : Minml.exp = Minml.Int 15
+    # Eval.eval(Top.parse "let val x = 5 in x * 3 * y end;");; 
+    Exception: Eval.Stuck "Free variable (y) during evaluation".
+    # Eval.eval(Top.parse "let val x = 5 in x * 3 * 5 end;");; 
+    - : Minml.exp = Minml.Int 75
+    # Eval.eval(Top.parse "let val x = 5 in 6 end;");; 
+    - : Minml.exp = Minml.Int 6
+    # Eval.eval(Top.parse "let val x = 5 in x + 3 * 2 end;");; 
+    - : Minml.exp = Minml.Int 11
+    # Eval.eval(Top.parse "let val x = 5 in (x + 3) * 2 end;");; 
+    - : Minml.exp = Minml.Int 16
+
+  *)
+  | Fn (x, t, e) -> Fn(x, t, e)
   | Int _ -> exp
   | Bool _ -> exp
 
   | Var x -> raise (Stuck ("Free variable (" ^ x ^ ") during evaluation"))
 
-  | Rec (f, t, e) -> (*raise Unimplemented*) eval (step (Rec(f, t, e))) (*by the way, I don't know what step does... I just guessed*)
+  | Rec (f, t, e) -> eval (step (Rec(f, t, e))) 
 
   (* primitive operations +, -, *, <, = *)
   | Primop(po, args) ->
@@ -294,7 +316,7 @@ and eval exp =
 
   | Tuple es -> Tuple (evalList es)
 
-  | Let(d, e2) -> (*raise Unimplemented*) eval (step (Let(d, e2)))
+  | Let(d, e2) -> eval (step (Let(d, e2)))
 
   | Anno (e, _) -> eval e     (* types are ignored in evaluation *)
 
@@ -304,7 +326,7 @@ and eval exp =
        | Bool false -> eval e2
        | _ -> raise (Stuck "Left term of application is not an Fn"))
 
-  | Apply (e1, e2) -> let Fn(x, t, e) = eval e1 in let v2 = eval e2 in eval (subst (v2, x) e) (*have written but not tested...*)
+  | Apply (e1, e2) -> let Fn(x, t, e) = eval e1 in let v2 = eval e2 in eval (subst (v2, x) e) 
 
   in
     bigstep_depth := !bigstep_depth - 1;
