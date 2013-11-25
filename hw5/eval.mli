@@ -1,4 +1,5 @@
 exception Stuck of string
+
   val freeVariables : Minml.exp -> string list
 
   val unusedVariables : Minml.exp -> string list

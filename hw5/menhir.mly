@@ -108,5 +108,5 @@ tuplename:
 
 netuplename:
 | x = VAR {[x]}
-| x = VAR COMMA t = tuplename {x :: t}
+| x = VAR COMMA t = netuplename {x :: t}
 

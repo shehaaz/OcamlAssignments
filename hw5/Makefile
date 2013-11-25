@@ -9,7 +9,7 @@ runtop:
 	./top.top -I _build/
 
 clean:
-	rm -rf _build exec.native loop.top
+	rm -rf _build exec.native top.top
 
 menhir:
 	ocamlbuild -use-menhir exec.native

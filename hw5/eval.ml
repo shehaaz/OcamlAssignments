@@ -87,7 +87,7 @@ let freeVariables e = freeVars e
 (* Question 1 *)
 
 let rec unusedVars e = match e with
-  | Var y -> [y]
+  | Var y -> []
   | Int n -> []
   | Bool b -> []
   | If(e, e1, e2) ->
@@ -107,8 +107,8 @@ let rec unusedVars e = match e with
       (unusedVars e1) @ (unusedVars e2)
   | Anno (e, _) ->
       unusedVars e
-and unusedVariables e = delete(freeVars e, unusedVars e)
-   
+
+let unusedVariables e = unusedVars e
 
 (* ---------------------------------------------------------- *)
 (* Substitution (corrected description)
