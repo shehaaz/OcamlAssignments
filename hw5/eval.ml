@@ -96,7 +96,7 @@ let rec unusedVariables e =
   | Let (decs, e2) ->
     let (free, bound) = varsDecs decs in
     free @ bound @ (allVariables e2)
-  | Primop(po, args) -> List.fold_right (fun e1 e2 -> (allVariables e1) @ e2) args []
+  | Primop(po, args) -> List.fold_right (fun e1 e2 -> union(allVariables e1, e2)) args []
   | Tuple exps -> unionList (List.map allVariables exps)
   | Fn (x, _, e) -> x::(allVariables e)
   | Rec (x, _, e) -> x::(allVariables e)
@@ -104,12 +104,15 @@ let rec unusedVariables e =
       (allVariables e1) @ ( allVariables e2)
   | Anno (e, _) ->
       allVariables e in
-   let vars = allVariables e in takeUnusedVars vars
+  let freevars = freeVariables e in
+   let vars = allVariables e in intersect freevars (takeUnusedVars vars)
 and takeUnusedVars list = match list with
   | [] -> []
   | hd::tl -> let (p1, p2) = List.partition (fun x -> x = hd) tl in
 	      if ((List.length p1) + 1) mod 2==0 then takeUnusedVars p2 else hd::(takeUnusedVars p2)
-  
+and intersect list1 list2 = match list1 with
+  | [] -> list2
+  | hd::tl -> intersect tl (List.filter (fun x -> x!=hd) list2)
 
 (* ---------------------------------------------------------- *)
 (* Substitution (corrected description)
