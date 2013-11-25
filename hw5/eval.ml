@@ -86,33 +86,29 @@ let freeVariables e = freeVars e
 (* ---------------------------------------------------------- *)
 (* Question 1 *)
 
-let rec unusedVariables e = 
-  let rec allVariables t = match t with
+let rec unusedVars e = match e with
   | Var y -> [y]
   | Int n -> []
   | Bool b -> []
   | If(e, e1, e2) ->
-    (allVariables e) @ (allVariables e1) @ (allVariables e2)
+    (unusedVars e) @ (unusedVars e1) @ (unusedVars e2)
   | Let (decs, e2) ->
     let (free, bound) = varsDecs decs in
-    free @ bound @ (allVariables e2)
-  | Primop(po, args) -> List.fold_right (fun e1 e2 -> union(allVariables e1, e2)) args []
-  | Tuple exps -> unionList (List.map allVariables exps)
-  | Fn (x, _, e) -> x::(allVariables e)
-  | Rec (x, _, e) -> x::(allVariables e)
+    let rec checkForEach listBound= match listBound with
+      | [] -> []
+      | hd::tl -> let (p1, p2) = List.partition (fun y -> y=hd) (freeVars e2) in
+		  if p1=[] then hd::(checkForEach tl) else checkForEach tl
+    in checkForEach bound
+  | Primop(po, args) -> List.fold_right (fun e1 e2 -> union(unusedVars e1, e2)) args []
+  | Tuple exps -> unionList (List.map unusedVars exps)
+  | Fn (x, _, e) |Rec(x, _, e) -> 
+    let (p1,p2) = List.partition (fun y -> y=x) (freeVars e) in if p1=[] then x::(unusedVars e) else unusedVars e
   | Apply (e1, e2) ->
-      (allVariables e1) @ ( allVariables e2)
+      (unusedVars e1) @ (unusedVars e2)
   | Anno (e, _) ->
-      allVariables e in
-  let freevars = freeVariables e in
-   let vars = allVariables e in intersect freevars (takeUnusedVars vars)
-and takeUnusedVars list = match list with
-  | [] -> []
-  | hd::tl -> let (p1, p2) = List.partition (fun x -> x = hd) tl in
-	      if ((List.length p1) + 1) mod 2==0 then takeUnusedVars p2 else hd::(takeUnusedVars p2)
-and intersect list1 list2 = match list1 with
-  | [] -> list2
-  | hd::tl -> intersect tl (List.filter (fun x -> x!=hd) list2)
+      unusedVars e
+and unusedVariables e = delete(freeVars e, unusedVars e)
+   
 
 (* ---------------------------------------------------------- *)
 (* Substitution (corrected description)
