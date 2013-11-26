@@ -69,9 +69,14 @@ let rec infer ctx exp = match exp with
   | M.Primop (po, args) -> if (primopInput po) = (List.map (fun s->infer ctx s) args) then primopOutput po else fail msg
   | M.Tuple exps -> Product (List.map (fun x -> infer ctx x) exps)
   | M.Fn (x, t, e) -> let tt = get t in infer (extend ctx (x,tt)) e
-  | M.Rec (x, t, e) -> raise Unimplemented
-  | M.Let (decs, e2) -> raise Unimplemented
+  | M.Rec (x, t, e) -> let tt = get t in infer (extend ctx (x,tt)) e
+  | M.Let (decs, e2) -> infer (inferdec ctx decs) e2
   | M.Apply (e1, e2) -> raise Unimplemented
   | M.Anno (e, t) -> raise Unimplemented
 
+and inferdec ctx dec = match dec with 
+  | [] -> ctx
+  | Val(exp,name)::tl -> inferdec (extend ctx (name, infer ctx exp)) tl 
+  | Valtuple(exp,names)::tl -> let Product list = infer ctx exp in inferdec (extend_list ctx (List.map2 (fun x y -> (x,y)) names list)) tl
+  | ByName(exp,name)::tl -> inferdec (extend ctx (name, infer ctx exp)) tl 
 
