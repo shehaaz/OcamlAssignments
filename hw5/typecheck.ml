@@ -55,7 +55,7 @@ and primopInput p = match p with
 
 (* Question 3. *)
 let msg = "Expression does not typecheck"
-let get y = match y with |Some k -> k | None -> fail "No annotation";;
+let get y = match y with |Some Arrow(x,y) -> x |Some k -> k  |None -> fail "No annotation";;
 (* infer : context -> M.exp -> tp  *)
 
 let rec infer ctx exp = match exp with
@@ -68,8 +68,8 @@ let rec infer ctx exp = match exp with
 		     else fail msg
   | M.Primop (po, args) -> if (primopInput po) = (List.map (fun s->infer ctx s) args) then primopOutput po else fail msg
   | M.Tuple exps -> Product (List.map (fun x -> infer ctx x) exps)
-  | M.Fn (x, t, e) -> let tt = get t in infer (extend ctx (x,tt)) e
-  | M.Rec (x, t, e) -> let tt = get t in infer (extend ctx (x,tt)) e
+  | M.Fn (x, t, e) -> let tt = get t in infer (extend ctx (x,tt)) e (*maybe has bugs*)
+  | M.Rec (x, t, e) -> let tt = get t in Arrow(tt, infer (extend ctx (x,tt)) e) (*maybe has bugs*)
   | M.Let (decs, e2) -> infer (inferdec ctx decs) e2
   | M.Apply (e1, e2) -> raise Unimplemented
   | M.Anno (e, t) -> raise Unimplemented
