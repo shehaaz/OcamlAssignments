@@ -57,7 +57,14 @@ and primopInput p = match p with
 let msg = "Expression does not typecheck"
 let get y = match y with |Some Arrow(x,y) -> x |Some k -> k  |None -> fail "No annotation";;
 (* infer : context -> M.exp -> tp  *)
-
+let isFunction f = match f with |Arrow(x,y) -> true | _ -> false;;
+(*Basic cases examples
+1) Working
+let exp = Top.parse "2+2;";;
+Typecheck.infer Typecheck.empty exp;; 
+2) Works for if-cases
+3) 
+*)
 let rec infer ctx exp = match exp with
   | M.Var y -> lookup ctx y
   | M.Int n -> Int
@@ -71,8 +78,8 @@ let rec infer ctx exp = match exp with
   | M.Fn (x, t, e) -> let tt = get t in infer (extend ctx (x,tt)) e (*maybe has bugs*)
   | M.Rec (x, t, e) -> let tt = get t in Arrow(tt, infer (extend ctx (x,tt)) e) (*maybe has bugs*)
   | M.Let (decs, e2) -> infer (inferdec ctx decs) e2
-  | M.Apply (e1, e2) -> raise Unimplemented
-  | M.Anno (e, t) -> raise Unimplemented
+  | M.Apply (e1, e2) -> if isFunction (infer ctx e1) then (let funT = infer ctx e1 in let argT = infer ctx e2 in let Arrow(iT,oT) = funT in if iT = argT then oT else fail msg) else fail msg
+  | M.Anno (e, t) -> if (infer ctx e) = t then t else fail msg 
 
 and inferdec ctx dec = match dec with 
   | [] -> ctx
