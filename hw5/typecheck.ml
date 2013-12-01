@@ -85,7 +85,7 @@ let rec infer ctx exp = match exp with
 
 and inferdec ctx dec = match dec with 
   | [] -> ctx
-  | M.Val(M.Rec (x, t, e),name)::tl -> let Some fT = t in inferdec (extend ctx (name, fT)) tl
+  | M.Val(M.Rec (x, t, e),name)::tl -> let fT = get(t) in inferdec (extend ctx (name, fT)) tl
   | M.Val(exp,name)::tl -> inferdec (extend ctx (name, infer ctx exp)) tl 
   | M.Valtuple(exp,names)::tl -> let list = checkProduct(infer ctx exp) in inferdec (extend_list ctx (List.map2 (fun x y -> (x,y)) names list)) tl
   | M.ByName(exp,name)::tl -> inferdec (extend ctx (name, infer ctx exp)) tl 
