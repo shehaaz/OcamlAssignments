@@ -58,6 +58,7 @@ let msg = "Expression does not typecheck"
 let get y = match y with |Some Arrow(x,y) -> x |Some k -> k  |None -> fail "No annotation";;
 (* infer : context -> M.exp -> tp  *)
 let isFunction f = match f with |Arrow(x,y) -> true | _ -> false;;
+let checkArrow a = match a with |Arrow(x,y) -> (x,y) |_ -> fail msg;;
 (*Basic cases examples
 1) Working
 let exp = Top.parse "2+2;";;
@@ -78,13 +79,13 @@ let rec infer ctx exp = match exp with
   | M.Fn (x, t, e) -> let tt = get t in infer (extend ctx (x,tt)) e (*maybe has bugs*)
   | M.Rec (x, t, e) -> let tt = get t in Arrow(tt, infer (extend ctx (x,tt)) e) (*maybe has bugs*)
   | M.Let (decs, e2) -> infer (inferdec ctx decs) e2
-  | M.Apply (e1, e2) -> if isFunction (infer ctx e1) then (let funT = infer ctx e1 in let argT = infer ctx e2 in let Arrow(iT,oT) = funT in if iT = argT then oT else fail msg) else fail msg
+  | M.Apply (e1, e2) -> if isFunction (infer ctx e1) then (let funT = infer ctx e1 in let argT = infer ctx e2 in let (iT,oT) = checkArrow(funT) in if iT = argT then oT else fail msg) else fail msg
   | M.Anno (e, t) -> if (infer ctx e) = t then t else fail msg 
 
 and inferdec ctx dec = match dec with 
   | [] -> ctx
-  | Val(M.Rec (x, t, e),name)::tl -> let Some fT = t in inferdec (extend ctx (name, fT)) tl
-  | Val(exp,name)::tl -> inferdec (extend ctx (name, infer ctx exp)) tl 
-  | Valtuple(exp,names)::tl -> let Product list = infer ctx exp in inferdec (extend_list ctx (List.map2 (fun x y -> (x,y)) names list)) tl
-  | ByName(exp,name)::tl -> inferdec (extend ctx (name, infer ctx exp)) tl 
+  | M.Val(M.Rec (x, t, e),name)::tl -> let Some fT = t in inferdec (extend ctx (name, fT)) tl
+  | M.Val(exp,name)::tl -> inferdec (extend ctx (name, infer ctx exp)) tl 
+  | M.Valtuple(exp,names)::tl -> let Product list = infer ctx exp in inferdec (extend_list ctx (List.map2 (fun x y -> (x,y)) names list)) tl
+  | M.ByName(exp,name)::tl -> inferdec (extend ctx (name, infer ctx exp)) tl 
 
