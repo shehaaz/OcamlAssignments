@@ -59,6 +59,7 @@ let get y = match y with |Some Arrow(x,y) -> x |Some k -> k  |None -> fail "No a
 (* infer : context -> M.exp -> tp  *)
 let isFunction f = match f with |Arrow(x,y) -> true | _ -> false;;
 let checkArrow a = match a with |Arrow(x,y) -> (x,y) |_ -> fail msg;;
+let checkProduct p = match p with |Product list -> list |_ -> fail msg;;
 (*Basic cases examples
 1) Working
 let exp = Top.parse "2+2;";;
@@ -86,6 +87,6 @@ and inferdec ctx dec = match dec with
   | [] -> ctx
   | M.Val(M.Rec (x, t, e),name)::tl -> let Some fT = t in inferdec (extend ctx (name, fT)) tl
   | M.Val(exp,name)::tl -> inferdec (extend ctx (name, infer ctx exp)) tl 
-  | M.Valtuple(exp,names)::tl -> let Product list = infer ctx exp in inferdec (extend_list ctx (List.map2 (fun x y -> (x,y)) names list)) tl
+  | M.Valtuple(exp,names)::tl -> let list = checkProduct(infer ctx exp) in inferdec (extend_list ctx (List.map2 (fun x y -> (x,y)) names list)) tl
   | M.ByName(exp,name)::tl -> inferdec (extend ctx (name, infer ctx exp)) tl 
 
