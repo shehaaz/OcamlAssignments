@@ -32,6 +32,8 @@ let rec occurs s t = match s, t with
     | Some t' -> (s == r) || (occurs s t')
 (* Question 4. *)
 let rec unify s t = match s, t with
+  |Bool,Bool -> ()
+  |Int,Int -> ()
   | TVar(s0), TVar(t0) -> if s0 = t0 then () else (if !s0 = None then s0 := !t0 else (if !t0 = None then t0 := !s0 else raise (Error "TVar not compatible")))
   | Arrow(s1, s2), Arrow(t1, t2) -> unify s1 t1; unify s2 t2
   | y, TVar(x) 
