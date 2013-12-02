@@ -63,6 +63,7 @@ and primopInput p = match p with
 (* Question 3. *)
 let msg = "Expression does not typecheck"
 let get y = match y with |Some Arrow(x,y) -> x |Some k -> k  |None -> fail "No annotation";;
+let takeOutSome y = match y with |Some k -> k | None -> fail "Problem";;
 (* infer : context -> M.exp -> tp  *)
 let isFunction f = match f with |Arrow(x,y) -> true | _ -> false;;
 let checkArrow a = match a with |Arrow(x,y) -> (x,y) |_ -> fail msg;;
@@ -84,16 +85,15 @@ let rec infer ctx exp = match exp with
 		     else fail msg
   | M.Primop (po, args) -> if (primopInput po) = (List.map (fun s->infer ctx s) args) then primopOutput po else fail msg
   | M.Tuple exps -> Product (List.map (fun x -> infer ctx x) exps)
-  | M.Fn (x, t, e) -> let tt = get t in infer (extend ctx (x,tt)) e (*maybe has bugs*)
-  | M.Rec (x, t, e) -> let tt = get t in Arrow(tt, infer (extend ctx (x,tt)) e) (*maybe has bugs*)
+  | M.Fn (x, t, e) -> if(t!=None) then let tp = takeOutSome(t) in infer (extend ctx (x,tp)) e else fail msg 
+  | M.Rec (x, t, e) -> let fT = get t in infer (extend ctx (x,fT)) e
+  | M.Let ([M.Val(M.Rec(x,t,e), name)], exp) -> let fT = takeOutSome(t) in let typeE = (infer (inferdec (extend ctx (name, fT)) []) e) in let (x,y) = checkArrow (takeOutSome t) in if typeE = y then infer (inferdec (extend ctx (name, fT)) []) exp else fail msg
   | M.Let (decs, e2) -> infer (inferdec ctx decs) e2
   | M.Apply (e1, e2) -> if isFunction (infer ctx e1) then (let funT = infer ctx e1 in let argT = infer ctx e2 in let (iT,oT) = checkArrow(funT) in if iT = argT then oT else fail msg) else fail msg
   | M.Anno (e, t) -> if (infer ctx e) = t then t else fail msg 
 
 and inferdec ctx dec = match dec with 
   | [] -> ctx
-  | M.Val(M.Rec (x, t, e),name)::tl -> let fT = get(t) in inferdec (extend ctx (name, fT)) tl
   | M.Val(exp,name)::tl -> inferdec (extend ctx (name, infer ctx exp)) tl 
   | M.Valtuple(exp,names)::tl -> let list = checkProduct(infer ctx exp) in inferdec (extend_list ctx (List.map2 (fun x y -> (x,y)) names list)) tl
   | M.ByName(exp,name)::tl -> inferdec (extend ctx (name, infer ctx exp)) tl 
-
