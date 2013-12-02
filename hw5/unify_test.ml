@@ -27,7 +27,7 @@ let rec equal s t = match s, t with
   |  _, T.TVar {contents = Some t'} ->
      equal s t'
   | T.TVar x, T.TVar y ->
-     x == y
+     x = y
   | _,_ -> false
 
 
