@@ -1,3 +1,9 @@
+(*
+Name: Ataias Pereira Reis & ID: 260590875
+Name: Ahmad Saif & ID: 260329527
+
+"We certify that both partners contributed equally to the work
+submitted here and that it represents solely our own efforts"*)
 
 
 (* unify: typ * typ -> unit 
@@ -39,7 +45,7 @@ let rec unify s t = match s, t with
   | y, TVar(x) 
   | TVar(x), y -> if occurs x y then raise (Error "Variable occurs inside the other") else (if !x = None then x := (Some y) else (if !x = (Some y) then () else raise (Error "Doesn't match")))
   | Product(hd1::tl1), Product(hd2::tl2) -> unify hd1 hd2; if tl1 != [] && tl2 != [] then unify (Product(tl1)) (Product(tl2)) else (if tl1!=tl2 then raise (Error "Problem with tuples.") else ())
-
+  | _, _ -> raise (Error "Does not match a valid case in unify!")
 
 let unifiable (t, t') = 
   try

@@ -1,3 +1,11 @@
+(*
+Name: Ataias Pereira Reis & ID: 260590875
+Name: Ahmad Saif & ID: 260329527
+
+"We certify that both partners contributed equally to the work
+submitted here and that it represents solely our own efforts"*)
+
+
 (* Evaluation of MinML Expression via big step semantics *)
 
 let verbose = ref 0
@@ -250,6 +258,10 @@ and renameListAsNeeded names e' exp =
  * Q2: Evaluation
  *-------------------------------------------------------------------*)
 
+let rec returnArgs f = match f with
+| Fn(x, t, e) -> (x,t,e)
+| _ -> raise (Stuck "Not a function")
+
 let rec evalList (exps : exp list) =
   List.map eval exps
 
@@ -326,7 +338,7 @@ and eval exp =
        | Bool false -> eval e2
        | _ -> raise (Stuck "Left term of application is not an Fn"))
 
-  | Apply (e1, e2) -> let Fn(x, t, e) = eval e1 in let v2 = eval e2 in eval (subst (v2, x) e) 
+  | Apply (e1, e2) -> let (x, t, e) = returnArgs(eval e1) in let v2 = eval e2 in eval (subst (v2, x) e) 
 
   in
     bigstep_depth := !bigstep_depth - 1;

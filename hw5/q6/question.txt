@@ -1,0 +1,17 @@
+(*
+Name: Ataias Pereira Reis & ID: 260590875
+Name: Ahmad Saif & ID: 260329527
+
+"We certify that both partners contributed equally to the work
+submitted here and that it represents solely our own efforts"*)
+
+
+Question:
+
+Write a function merge which takes as input two integer lists sorted in increasing order and returns a new sorted list containing the elements of the 
+first two
+
+
+Answer:
+
+let rec merge l1 l2 = List.sort (fun x y -> x-y) (l1@l2);;
