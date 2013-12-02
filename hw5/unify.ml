@@ -30,14 +30,13 @@ let rec occurs s t = match s, t with
    match !r with
     | None -> (s == r)
     | Some t' -> (s == r) || (occurs s t')
-
 (* Question 4. *)
 let rec unify s t = match s, t with
-  | TVar(s0), TVar(t0) -> if s0 = t0 then () else (if !s0 = None then s0 := !t0 else (if !t0 = None then t0 := !s0 else raise (Error "here")))
+  | TVar(s0), TVar(t0) -> if s0 = t0 then () else (if !s0 = None then s0 := !t0 else (if !t0 = None then t0 := !s0 else raise (Error "TVar not compatible")))
   | Arrow(s1, s2), Arrow(t1, t2) -> unify s1 t1; unify s2 t2
   | y, TVar(x) 
-  | TVar(x), y -> if !x = None then x := (Some y) else (if !x = (Some y) then () else raise (Error "there"))
-  | Product(hd1::tl1), Product(hd2::tl2) -> unify hd1 hd2; if tl1 != [] && tl2 != [] then unify (Product(tl1)) (Product(tl2)) else (if tl1!=tl2 then raise (Error "another place") else ())
+  | TVar(x), y -> if occurs x y then raise (Error "Variable occurs inside the other") else (if !x = None then x := (Some y) else (if !x = (Some y) then () else raise (Error "Doesn't match")))
+  | Product(hd1::tl1), Product(hd2::tl2) -> unify hd1 hd2; if tl1 != [] && tl2 != [] then unify (Product(tl1)) (Product(tl2)) else (if tl1!=tl2 then raise (Error "Problem with tuples.") else ())
 
 
 let unifiable (t, t') = 
